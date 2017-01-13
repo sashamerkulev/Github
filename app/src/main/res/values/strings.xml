@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Github</string>
+
+    <string name="menu_refresh">Обновить</string>
+    <string name="menu_logout">Выйти</string>
+
+    <string name="search_validation_message">Мало букв</string>
+    <string name="read_data_message">Ошибка</string>
+
+    <string name="prompt_login">Логин</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Войти</string>
+
+</resources>
