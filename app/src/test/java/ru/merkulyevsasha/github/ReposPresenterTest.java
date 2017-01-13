@@ -10,8 +10,8 @@ import org.mockito.junit.MockitoRule;
 
 import java.util.ArrayList;
 
-import ru.merkulyevsasha.github.helpers.DataInterface;
-import ru.merkulyevsasha.github.helpers.DatabaseInterface;
+import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
+import ru.merkulyevsasha.github.helpers.db.DatabaseInterface;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.repolist.MvpListView;
 import ru.merkulyevsasha.github.mvp.repolist.ReposPresenter;
@@ -69,8 +69,8 @@ public class ReposPresenterTest {
         return collection;
     }
 
-    private DataInterface getDataInterface(final ArrayList<Repo> testRepos){
-        return new DataInterface(){
+    private HttpDataInterface getDataInterface(final ArrayList<Repo> testRepos){
+        return new HttpDataInterface(){
             @Override
             public Observable<ArrayList<Repo>> getRepos() {
                 return Observable.just(testRepos);
@@ -96,7 +96,7 @@ public class ReposPresenterTest {
             }
 
             @Override
-            public void cleanRepos() {
+            public void cleanRepos(String login) {
 
             }
 

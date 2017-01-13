@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers;
+package ru.merkulyevsasha.github.helpers.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

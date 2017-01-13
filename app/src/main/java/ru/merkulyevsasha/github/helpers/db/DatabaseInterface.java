@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers;
+package ru.merkulyevsasha.github.helpers.db;
 
 import java.util.ArrayList;
 
@@ -11,6 +11,6 @@ public interface DatabaseInterface  {
     Observable<ArrayList<Repo>> getRepos(String login);
     Observable<ArrayList<Repo>> searchRepos(String login, String searchText);
     void saveRepos(String login, ArrayList<Repo> repos);
-    void cleanRepos();
+    void cleanRepos(String login);
 
 }

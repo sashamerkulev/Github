@@ -17,10 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.merkulyevsasha.github.R;
-import ru.merkulyevsasha.github.helpers.DbHelper;
-import ru.merkulyevsasha.github.helpers.HttpHelper;
+import ru.merkulyevsasha.github.helpers.db.DbHelper;
+import ru.merkulyevsasha.github.helpers.http.HttpHelper;
 import ru.merkulyevsasha.github.models.Credentials;
-import ru.merkulyevsasha.github.helpers.PreferencesHelper;
+import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.BaseActivity;
 import ru.merkulyevsasha.github.mvp.repodetails.DetailsActivity;

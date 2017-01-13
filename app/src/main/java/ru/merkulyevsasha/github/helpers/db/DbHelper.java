@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers;
+package ru.merkulyevsasha.github.helpers.db;
 
 
 import android.content.ContentValues;
@@ -9,17 +9,15 @@ import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ru.merkulyevsasha.github.models.Repo;
 import rx.Observable;
 import rx.Scheduler;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
-import static ru.merkulyevsasha.github.helpers.RepoSQLiteOpenHelper.ID;
-import static ru.merkulyevsasha.github.helpers.RepoSQLiteOpenHelper.LOGIN_NAME;
-import static ru.merkulyevsasha.github.helpers.RepoSQLiteOpenHelper.REPO_NAME;
+import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.ID;
+import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.LOGIN_NAME;
+import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.REPO_NAME;
 
 public class DbHelper implements DatabaseInterface {
 
@@ -95,8 +93,8 @@ public class DbHelper implements DatabaseInterface {
     }
 
     @Override
-    public void cleanRepos(){
-        mDb.delete(RepoSQLiteOpenHelper.TABLE_NAME, null);
+    public void cleanRepos(String login){
+        mDb.delete(RepoSQLiteOpenHelper.TABLE_NAME, LOGIN_NAME + " = ?", new String[]{login});
     }
 
 }

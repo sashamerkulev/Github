@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers;
+package ru.merkulyevsasha.github.helpers.http;
 
 
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import ru.merkulyevsasha.github.models.Repo;
 import rx.Observable;
 
-public class HttpHelper implements DataInterface{
+public class HttpHelper implements HttpDataInterface {
 
     @Override
     public Observable<ArrayList<Repo>> getRepos(){

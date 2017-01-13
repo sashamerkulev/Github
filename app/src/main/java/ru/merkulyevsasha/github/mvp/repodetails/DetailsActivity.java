@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.models.Credentials;
-import ru.merkulyevsasha.github.helpers.PreferencesHelper;
+import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.mvp.BaseActivity;
 
 

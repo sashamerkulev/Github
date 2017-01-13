@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
-import ru.merkulyevsasha.github.helpers.DbHelper;
+import ru.merkulyevsasha.github.helpers.db.DbHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
@@ -21,7 +21,7 @@ import rx.schedulers.Schedulers;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
+public class DbInstrumentedTest {
 
     private static final String TEST_LOGIN = "testlogin";
 
@@ -39,7 +39,7 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
         DbHelper db = new DbHelper(appContext, Schedulers.immediate());
-        db.cleanRepos();
+        db.cleanRepos(TEST_LOGIN);
         ArrayList<Repo> collectionTest = getTestReposCollectionWithItem(1, "name");
 
         db.saveRepos(TEST_LOGIN, collectionTest);
@@ -59,7 +59,7 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
         DbHelper db = new DbHelper(appContext, Schedulers.immediate());
-        db.cleanRepos();
+        db.cleanRepos(TEST_LOGIN);
 
         ArrayList<Repo> collectionTest = getTestReposCollectionWithItem(1, "name");
 

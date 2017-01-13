@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import ru.merkulyevsasha.github.helpers.PreferencesHelper;
+import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
