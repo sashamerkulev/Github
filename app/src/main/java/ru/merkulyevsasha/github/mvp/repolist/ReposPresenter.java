@@ -48,13 +48,7 @@ public class ReposPresenter {
 
         if (repoDb == null){
             repoHttp
-                    .doOnNext(new Action1<ArrayList<Repo>>() {
-                        @Override
-                        public void call(ArrayList<Repo> repos) {
-                            mDb.cleanRepos(mLogin);
-                            mDb.saveRepos(mLogin, repos);
-                        }
-                    })
+                    .doOnNext(saveCollectionToDb(true))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(getSubscriber());
@@ -68,15 +62,7 @@ public class ReposPresenter {
                     }
                     return repos == null || repos.isEmpty() ? repoHttp : Observable.just(repos);
                 }
-            }).doOnNext(new Action1<ArrayList<Repo>>() {
-                @Override
-                public void call(ArrayList<Repo> repos) {
-                    if (countDbData.get() == 0) {
-                        mDb.cleanRepos(mLogin);
-                        mDb.saveRepos(mLogin, repos);
-                    }
-                }
-            })
+            }).doOnNext(saveCollectionToDb(countDbData.get()==0))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(getSubscriber());
@@ -112,16 +98,22 @@ public class ReposPresenter {
                 .subscribe(getSubscriber());
     }
 
+    private Action1<ArrayList<Repo>> saveCollectionToDb(final boolean storeInDb){
+        return new Action1<ArrayList<Repo>>() {
+            @Override
+            public void call(ArrayList<Repo> repos) {
+                if (storeInDb) {
+                    mDb.cleanRepos(mLogin);
+                    mDb.saveRepos(mLogin, repos);
+                }
+            }
+        };
+    }
+
     public void loadFromHttp() {
         mView.showProgress();
         mHttp.getRepos()
-                .doOnNext(new Action1<ArrayList<Repo>>() {
-                    @Override
-                    public void call(ArrayList<Repo> repos) {
-                        mDb.cleanRepos(mLogin);
-                        mDb.saveRepos(mLogin, repos);
-                    }
-                })
+                .doOnNext(saveCollectionToDb(true))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getSubscriber());
