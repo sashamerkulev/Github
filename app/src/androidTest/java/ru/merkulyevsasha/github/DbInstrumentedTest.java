@@ -4,15 +4,15 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
-import ru.merkulyevsasha.github.helpers.db.DbHelper;
+import ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper;
+import ru.merkulyevsasha.github.models.Owner;
 import ru.merkulyevsasha.github.models.Repo;
-import rx.observers.TestSubscriber;
-import rx.schedulers.Schedulers;
 
 
 /**
@@ -30,6 +30,7 @@ public class DbInstrumentedTest {
         final Repo item = new Repo();
         item.setId(id);
         item.setFullName(name);
+        item.setOwner(new Owner());
         collection.add(item);
         return collection;
     }
@@ -38,18 +39,16 @@ public class DbInstrumentedTest {
     public void saveRepos_works() throws Exception {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
-        DbHelper db = new DbHelper(appContext, Schedulers.immediate());
+        RepoSQLiteOpenHelper db = new RepoSQLiteOpenHelper(appContext);
         db.cleanRepos(TEST_LOGIN);
         ArrayList<Repo> collectionTest = getTestReposCollectionWithItem(1, "name");
-
         db.saveRepos(TEST_LOGIN, collectionTest);
 
-        TestSubscriber<ArrayList<Repo>> testSubscriber = new TestSubscriber<>();
+        ArrayList<Repo> repos = db.getRepos(TEST_LOGIN);
 
-        db.getRepos(TEST_LOGIN).subscribe(testSubscriber);
+        Assert.assertEquals(collectionTest.size(), repos.size());
 
 
-        testSubscriber.assertValueCount(collectionTest.size());
 
 
     }
@@ -58,18 +57,16 @@ public class DbInstrumentedTest {
     public void searchRepos_works() throws Exception {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
-        DbHelper db = new DbHelper(appContext, Schedulers.immediate());
+        RepoSQLiteOpenHelper db = new RepoSQLiteOpenHelper(appContext);
         db.cleanRepos(TEST_LOGIN);
 
         ArrayList<Repo> collectionTest = getTestReposCollectionWithItem(1, "name");
 
         db.saveRepos(TEST_LOGIN, collectionTest);
 
-        TestSubscriber<ArrayList<Repo>> testSubscriber = new TestSubscriber<>();
+        ArrayList<Repo> repos = db.searchRepos(TEST_LOGIN, "nam");
 
-        db.searchRepos(TEST_LOGIN, "nam").subscribe(testSubscriber);
-
-        testSubscriber.assertValueCount(collectionTest.size());
+        Assert.assertEquals(collectionTest.size(), repos.size());
 
     }
 

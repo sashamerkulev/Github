@@ -10,8 +10,10 @@ import org.mockito.junit.MockitoRule;
 
 import java.util.ArrayList;
 
+import ru.merkulyevsasha.github.helpers.db.DbInterface;
 import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
-import ru.merkulyevsasha.github.helpers.db.DatabaseInterface;
+import ru.merkulyevsasha.github.models.Auth;
+import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.repolist.MvpListView;
 import ru.merkulyevsasha.github.mvp.repolist.ReposPresenter;
@@ -25,15 +27,16 @@ import rx.schedulers.Schedulers;
 
 import static org.mockito.Mockito.*;
 
-public class ReposPresenterTest {
+public class ReposPresenterTests {
 
     private static final String TEST_LOGIN = "testlogin";
+    private static final Credentials CREDENTIALS_TEST = new Credentials(TEST_LOGIN, TEST_LOGIN);
 
     @Mock
     MvpListView view;
 
     @Mock
-    DatabaseInterface db;
+    DbInterface db;
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -59,6 +62,7 @@ public class ReposPresenterTest {
     @After
     public void tearDown() {
         RxAndroidPlugins.getInstance().reset();
+        RxJavaHooks.clear();
     }
 
     private ArrayList<Repo> getTestReposCollectionWithItem(final int id){
@@ -69,25 +73,30 @@ public class ReposPresenterTest {
         return collection;
     }
 
-    private HttpDataInterface getDataInterface(final ArrayList<Repo> testRepos){
+    private HttpDataInterface getHttpDataInterface(final ArrayList<Repo> testRepos){
         return new HttpDataInterface(){
             @Override
-            public Observable<ArrayList<Repo>> getRepos() {
+            public Observable<ArrayList<Auth>> auth(String login, String password) {
+                return null;
+            }
+
+            @Override
+            public Observable<ArrayList<Repo>> getRepos(String login, String password) {
                 return Observable.just(testRepos);
             }
         };
     }
 
-    private DatabaseInterface getDataSearchInterface(final ArrayList<Repo> testRepos){
-        return new DatabaseInterface(){
+    private DbInterface getDataSearchInterface(final ArrayList<Repo> testRepos){
+        return new DbInterface(){
             @Override
-            public Observable<ArrayList<Repo>> getRepos(String login) {
-                return Observable.just(testRepos);
+            public ArrayList<Repo> getRepos(String login) {
+                return testRepos;
             }
 
             @Override
-            public Observable<ArrayList<Repo>> searchRepos(String login, String searchText) {
-                return Observable.just(testRepos);
+            public ArrayList<Repo> searchRepos(String login, String searchText) {
+                return testRepos;
             }
 
             @Override
@@ -109,7 +118,7 @@ public class ReposPresenterTest {
         final ArrayList<Repo> dbRepos = getTestReposCollectionWithItem(1);
         final ArrayList<Repo> httpRepos = new ArrayList<>();
 
-        ReposPresenter presenter = new ReposPresenter(TEST_LOGIN, view, getDataSearchInterface(dbRepos), getDataInterface(httpRepos));
+        ReposPresenter presenter = new ReposPresenter(CREDENTIALS_TEST, view, getDataSearchInterface(dbRepos), getHttpDataInterface(httpRepos));
         presenter.load();
 
         verify(view).showList(dbRepos);
@@ -122,7 +131,7 @@ public class ReposPresenterTest {
         final ArrayList<Repo> dbRepos = getTestReposCollectionWithItem(1);
         final ArrayList<Repo> httpRepos = getTestReposCollectionWithItem(2);
 
-        ReposPresenter presenter = new ReposPresenter(TEST_LOGIN, view, getDataSearchInterface(dbRepos), getDataInterface(httpRepos));
+        ReposPresenter presenter = new ReposPresenter(CREDENTIALS_TEST, view, getDataSearchInterface(dbRepos), getHttpDataInterface(httpRepos));
         presenter.load();
 
         verify(view).showList(dbRepos);
@@ -135,7 +144,7 @@ public class ReposPresenterTest {
         final ArrayList<Repo> dbRepos = new ArrayList<>();
         final ArrayList<Repo> httpRepos = getTestReposCollectionWithItem(2);
 
-        ReposPresenter presenter = new ReposPresenter(TEST_LOGIN, view, getDataSearchInterface(dbRepos), getDataInterface(httpRepos));
+        ReposPresenter presenter = new ReposPresenter(CREDENTIALS_TEST, view, getDataSearchInterface(dbRepos), getHttpDataInterface(httpRepos));
         presenter.load();
 
         verify(view).showList(httpRepos);
@@ -147,7 +156,7 @@ public class ReposPresenterTest {
 
         final ArrayList<Repo> httpRepos = getTestReposCollectionWithItem(2);
 
-        ReposPresenter presenter = new ReposPresenter(TEST_LOGIN, view, db, getDataInterface(httpRepos));
+        ReposPresenter presenter = new ReposPresenter(CREDENTIALS_TEST, view, db, getHttpDataInterface(httpRepos));
         presenter.load();
 
         verify(view).showList(httpRepos);
@@ -159,7 +168,7 @@ public class ReposPresenterTest {
 
         final ArrayList<Repo> httpRepos = getTestReposCollectionWithItem(2);
 
-        ReposPresenter presenter = new ReposPresenter(TEST_LOGIN, view, db, getDataInterface(httpRepos));
+        ReposPresenter presenter = new ReposPresenter(CREDENTIALS_TEST, view, db, getHttpDataInterface(httpRepos));
         presenter.load();
 
         verify(db).saveRepos(TEST_LOGIN, httpRepos);
@@ -171,7 +180,7 @@ public class ReposPresenterTest {
 
         final ArrayList<Repo> httpRepos = getTestReposCollectionWithItem(2);
 
-        ReposPresenter presenter = new ReposPresenter(TEST_LOGIN, view, db, getDataInterface(httpRepos));
+        ReposPresenter presenter = new ReposPresenter(CREDENTIALS_TEST, view, db, getHttpDataInterface(httpRepos));
         presenter.loadFromHttp();
 
         verify(db).saveRepos(TEST_LOGIN, httpRepos);

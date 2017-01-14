@@ -11,20 +11,18 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.merkulyevsasha.github.R;
-import ru.merkulyevsasha.github.helpers.db.DbHelper;
-import ru.merkulyevsasha.github.helpers.http.HttpHelper;
+import ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper;
+import ru.merkulyevsasha.github.helpers.http.GithubService;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.BaseActivity;
 import ru.merkulyevsasha.github.mvp.repodetails.DetailsActivity;
-import rx.schedulers.Schedulers;
 
 import static ru.merkulyevsasha.github.mvp.repodetails.DetailsActivity.KEY_REPO;
 
@@ -80,7 +78,7 @@ public class MainActivity extends BaseActivity
             startLoginActivityAndFinish();
         }
 
-        mPresenter = new ReposPresenter(mCred.getLogin(), this, new DbHelper(this, Schedulers.io()), new HttpHelper());
+        mPresenter = new ReposPresenter(mCred, this, new RepoSQLiteOpenHelper(this), new GithubService());
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerview);
@@ -152,7 +150,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        if (query.length() < 5) {
+        if (query.length() < 3) {
             showMessage(R.string.search_validation_message);
             return false;
         }
@@ -165,7 +163,7 @@ public class MainActivity extends BaseActivity
     public boolean onQueryTextChange(String newText) {
         if (newText.isEmpty()) {
             mSearchText = newText;
-            mPresenter.loadFromDb();
+            mPresenter.search(newText);
         }
         return false;
     }
@@ -173,7 +171,7 @@ public class MainActivity extends BaseActivity
     @Override
     public void showDetails(Repo repo) {
         Intent activity = new Intent(this, DetailsActivity.class);
-        activity.putExtra(KEY_REPO, repo.getId());
+        activity.putExtra(KEY_REPO, repo);
         startActivity(activity);
     }
 

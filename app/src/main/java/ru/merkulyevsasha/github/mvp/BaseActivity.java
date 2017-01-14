@@ -5,9 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import ru.merkulyevsasha.github.LoginActivity;
 
-/**
- * Created by sasha on 12.01.2017.
- */
 
 public class BaseActivity extends AppCompatActivity {
 

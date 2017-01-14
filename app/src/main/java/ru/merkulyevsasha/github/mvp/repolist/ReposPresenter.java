@@ -2,71 +2,67 @@ package ru.merkulyevsasha.github.mvp.repolist;
 
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
 
 import ru.merkulyevsasha.github.R;
+import ru.merkulyevsasha.github.helpers.db.DbInterface;
 import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
-import ru.merkulyevsasha.github.helpers.db.DatabaseInterface;
+import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
-import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
 public class ReposPresenter {
 
     private MvpListView mView;
-    private DatabaseInterface mDb;
+    private DbInterface mDb;
     private HttpDataInterface mHttp;
-    private String mLogin;
+    private Credentials mCredentials;
 
-    public ReposPresenter(String login, MvpListView view, DatabaseInterface db, HttpDataInterface http) {
+    public ReposPresenter(Credentials credentials, MvpListView view, DbInterface db, HttpDataInterface http) {
         mView = view;
         mDb = db;
         mHttp = http;
-        mLogin = login;
+        mCredentials = credentials ;
     }
 
-    public void search(String searchText) {
-        mView.showProgress();
-
-        mDb.searchRepos(mLogin, searchText)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getSubscriber());
+    public void search(final String searchText) {
+//        mView.showProgress();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+                List<Repo> repos = mDb.searchRepos(mCredentials.getLogin(), searchText);
+                if (repos == null || repos.size() == 0){
+                    mView.hideProgress();
+                    mView.showMessage(R.string.search_nothing_found_message);
+                } else {
+                    //mView.hideProgress();
+                    mView.showList(repos);
+                }
+//            }
+//        }).start();
 
     }
 
     public void load() {
-        mView.showProgress();
 
-        final Observable<ArrayList<Repo>> repoDb = mDb.getRepos(mLogin);
-        final Observable<ArrayList<Repo>> repoHttp = mHttp.getRepos();
-
-        if (repoDb == null){
-            repoHttp
-                    .doOnNext(saveCollectionToDb(true))
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(getSubscriber());
-        } else {
-            final AtomicInteger countDbData = new AtomicInteger(0);
-            repoDb.flatMap(new Func1<ArrayList<Repo>, Observable<ArrayList<Repo>>>() {
-                @Override
-                public Observable<ArrayList<Repo>> call(ArrayList<Repo> repos) {
-                    if (repos != null) {
-                        countDbData.set(repos.size());
-                    }
-                    return repos == null || repos.isEmpty() ? repoHttp : Observable.just(repos);
+//        mView.showProgress();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+                List<Repo> repos = mDb.getRepos(mCredentials.getLogin());
+                if (repos == null || repos.size() == 0){
+                    loadFromHttp();
+                } else {
+                    //mView.hideProgress();
+                    mView.showList(repos);
                 }
-            }).doOnNext(saveCollectionToDb(countDbData.get()==0))
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(getSubscriber());
-        }
+//            }
+//        }).start();
+
     }
 
     private Subscriber<ArrayList<Repo>> getSubscriber() {
@@ -90,30 +86,20 @@ public class ReposPresenter {
         };
     }
 
-    public void loadFromDb() {
-        mView.showProgress();
-        mDb.getRepos(mLogin)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getSubscriber());
-    }
-
-    private Action1<ArrayList<Repo>> saveCollectionToDb(final boolean storeInDb){
+    private Action1<ArrayList<Repo>> saveCollectionToDb(){
         return new Action1<ArrayList<Repo>>() {
             @Override
             public void call(ArrayList<Repo> repos) {
-                if (storeInDb) {
-                    mDb.cleanRepos(mLogin);
-                    mDb.saveRepos(mLogin, repos);
-                }
+                mDb.cleanRepos(mCredentials.getLogin());
+                mDb.saveRepos(mCredentials.getLogin(), repos);
             }
         };
     }
 
     public void loadFromHttp() {
         mView.showProgress();
-        mHttp.getRepos()
-                .doOnNext(saveCollectionToDb(true))
+        mHttp.getRepos(mCredentials.getLogin(), mCredentials.getPassword())
+                .doOnNext(saveCollectionToDb())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getSubscriber());
