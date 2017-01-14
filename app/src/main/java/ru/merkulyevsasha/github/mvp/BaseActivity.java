@@ -1,11 +1,13 @@
 package ru.merkulyevsasha.github.mvp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import ru.merkulyevsasha.github.LoginActivity;
 
 
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
     protected void startLoginActivityAndFinish(){

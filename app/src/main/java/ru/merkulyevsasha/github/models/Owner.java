@@ -21,7 +21,7 @@ public class Owner implements Parcelable{
 
     public Owner(){}
 
-    protected Owner(Parcel in) {
+    Owner(Parcel in) {
         login = in.readString();
         avatarUrl = in.readString();
         id = in.readInt();

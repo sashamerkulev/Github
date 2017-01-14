@@ -8,11 +8,11 @@ import ru.merkulyevsasha.github.models.Credentials;
 
 public class PreferencesHelper {
 
-    public static final String APP_PREFERENCES = "githubclient";
-    public static final String KEY_LOGIN = "login";
-    public static final String KEY_PASSWORD = "password";
+    private static final String APP_PREFERENCES = "githubclient";
+    private static final String KEY_LOGIN = "login";
+    private static final String KEY_PASSWORD = "password";
 
-    private SharedPreferences mSharedPreferences;
+    private final SharedPreferences mSharedPreferences;
 
     public PreferencesHelper(Context context){
         mSharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
@@ -22,14 +22,14 @@ public class PreferencesHelper {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(KEY_LOGIN, "");
         editor.putString(KEY_PASSWORD, "");
-        editor.commit();
+        editor.apply();
     }
 
     public void saveCredentials(String login, String password){
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(KEY_LOGIN, login);
         editor.putString(KEY_PASSWORD, password);
-        editor.commit();
+        editor.apply();
     }
 
     @Nullable

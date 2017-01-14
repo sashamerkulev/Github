@@ -72,7 +72,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Описание:"
+                    android:text="@string/text_description"
                     />
 
                 <TextView
@@ -93,8 +93,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ветки:"
+                    android:text="@string/text_forks"
                     android:paddingRight="@dimen/item_horizontal_margin"
+                    android:paddingEnd="@dimen/item_horizontal_margin"
                     />
 
                 <TextView
@@ -114,8 +115,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Наблюдатели:"
+                    android:text="@string/text_watchers"
                     android:paddingRight="@dimen/item_horizontal_margin"
+                    android:paddingEnd="@dimen/item_horizontal_margin"
                     />
 
                 <TextView

@@ -15,9 +15,8 @@ import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.models.Repo;
 
 
-public class ListViewAdapter extends ArrayAdapter<Repo> {
+class ListViewAdapter extends ArrayAdapter<Repo> {
 
-    private final Context mContext;
     private final List<Repo> mItems;
     private final LayoutInflater mInflater;
 
@@ -25,8 +24,7 @@ public class ListViewAdapter extends ArrayAdapter<Repo> {
         super(context, R.layout.main_listview_item, items);
 
         mItems = items;
-        mContext = context;
-        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override

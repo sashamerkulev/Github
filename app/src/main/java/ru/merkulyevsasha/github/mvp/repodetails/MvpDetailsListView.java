@@ -6,7 +6,7 @@ import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.mvp.MvpView;
 
 
-public interface MvpDetailsListView extends MvpView{
+interface MvpDetailsListView extends MvpView{
 
     void showList(List<CommitInfo> commits);
 

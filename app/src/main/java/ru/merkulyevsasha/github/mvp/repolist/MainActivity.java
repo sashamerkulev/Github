@@ -42,15 +42,9 @@ public class MainActivity extends BaseActivity
     private String mSearchText;
 
     private PreferencesHelper mPref;
-    private Credentials mCred;
 
     private ReposPresenter mPresenter;
 
-    private RecyclerView mRecyclerView;
-    private RecyclerViewAdapter mAdapter;
-    private LinearLayoutManager mLayoutManager;
-
-    private ListView mListView;
     private ListViewAdapter mListAdaper;
 
     @Override
@@ -66,7 +60,7 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         mPref = new PreferencesHelper(this);
-        mCred = mPref.getCredentials();
+        Credentials mCred = mPref.getCredentials();
         if (mCred == null){
             startLoginActivityAndFinish();
         }
@@ -83,14 +77,8 @@ public class MainActivity extends BaseActivity
 
         mPresenter = new ReposPresenter(mCred, this, new RepoSQLiteOpenHelper(this), new GithubService());
 
-//        mAdapter = new RecyclerViewAdapter(this, new ArrayList<Repo>());
-//        mLayoutManager = new LinearLayoutManager(this);
-//        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerview);
-//        mRecyclerView.setLayoutManager(mLayoutManager);
-//        mRecyclerView.setHasFixedSize(true);
-//        mRecyclerView.setAdapter(mAdapter);
         mListAdaper = new ListViewAdapter(this, new ArrayList<Repo>());
-        mListView = (ListView)findViewById(R.id.listview_listdata);
+        ListView mListView = (ListView) findViewById(R.id.listview_listdata);
         mListView.setAdapter(mListAdaper);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -204,8 +192,6 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void showList(List<Repo> repos) {
-//        mAdapter.mItems = repos;
-//        mAdapter.notifyDataSetChanged();
         mListAdaper.clear();
         mListAdaper.addAll(repos);
         mListAdaper.notifyDataSetChanged();

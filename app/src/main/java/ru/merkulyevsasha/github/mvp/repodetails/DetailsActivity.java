@@ -36,17 +36,13 @@ public class DetailsActivity extends BaseActivity
 
     private static final String KEY_SEARCHTEXT = "searchtext";
 
-    public static String KEY_REPO = "repo";
-
-    private PreferencesHelper mPref;
-    private Credentials mCred;
+    public static final String KEY_REPO = "repo";
 
     private SwipeRefreshLayout mRefreshLayout;
     private View mRootView;
 
-    public RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private DetailsRecyclerViewAdapter mAdapter;
-    private LinearLayoutManager mLayoutManager;
 
     private CommitsPresenter mPresenter;
 
@@ -66,8 +62,8 @@ public class DetailsActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        mPref = new PreferencesHelper(this);
-        mCred = mPref.getCredentials();
+        PreferencesHelper mPref = new PreferencesHelper(this);
+        Credentials mCred = mPref.getCredentials();
         if (mCred == null){
             startLoginActivityAndFinish();
         }
@@ -109,7 +105,7 @@ public class DetailsActivity extends BaseActivity
 
         mPresenter = new CommitsPresenter(repo, mCred, this, new RepoSQLiteOpenHelper(this), new GithubService());
 
-        mLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerview);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
