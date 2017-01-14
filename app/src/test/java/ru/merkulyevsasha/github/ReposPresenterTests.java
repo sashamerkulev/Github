@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import ru.merkulyevsasha.github.helpers.db.DbInterface;
 import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
 import ru.merkulyevsasha.github.models.Auth;
+import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.repolist.MvpListView;
@@ -81,6 +82,11 @@ public class ReposPresenterTests {
             }
 
             @Override
+            public Observable<ArrayList<CommitInfo>> getCommits(String login, String password, String owner, String repo) {
+                return null;
+            }
+
+            @Override
             public Observable<ArrayList<Repo>> getRepos(String login, String password) {
                 return Observable.just(testRepos);
             }
@@ -107,6 +113,21 @@ public class ReposPresenterTests {
             @Override
             public void cleanRepos(String login) {
 
+            }
+
+            @Override
+            public void cleanCommits(int repoId) {
+
+            }
+
+            @Override
+            public void saveCommits(int repoId, ArrayList<CommitInfo> commits) {
+
+            }
+
+            @Override
+            public ArrayList<CommitInfo> getCommits(int repoId) {
+                return null;
             }
 
         };

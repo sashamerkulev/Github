@@ -14,7 +14,7 @@ public class Owner implements Parcelable{
     private String login;
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName("avatar_url")
     @Expose
     private String avatarUrl;
@@ -24,6 +24,7 @@ public class Owner implements Parcelable{
     protected Owner(Parcel in) {
         login = in.readString();
         avatarUrl = in.readString();
+        id = in.readInt();
     }
 
     public static final Creator<Owner> CREATOR = new Creator<Owner>() {
@@ -72,5 +73,6 @@ public class Owner implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(login);
         dest.writeString(avatarUrl);
+        dest.writeInt(id);
     }
 }

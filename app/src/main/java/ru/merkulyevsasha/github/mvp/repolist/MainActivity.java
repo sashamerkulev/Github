@@ -11,6 +11,8 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +46,12 @@ public class MainActivity extends BaseActivity
 
     private ReposPresenter mPresenter;
 
-    public RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
 
+    private ListView mListView;
+    private ListViewAdapter mListAdaper;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -62,6 +66,12 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mPref = new PreferencesHelper(this);
+        mCred = mPref.getCredentials();
+        if (mCred == null){
+            startLoginActivityAndFinish();
+        }
+
         mRootView = findViewById(R.id.activity_main);
 
         mRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
@@ -72,20 +82,23 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        mPref = new PreferencesHelper(this);
-        mCred = mPref.getCredentials();
-        if (mCred == null){
-            startLoginActivityAndFinish();
-        }
-
         mPresenter = new ReposPresenter(mCred, this, new RepoSQLiteOpenHelper(this), new GithubService());
 
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerview);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(this, new ArrayList<Repo>());
-        mRecyclerView.setAdapter(mAdapter);
+//        mAdapter = new RecyclerViewAdapter(this, new ArrayList<Repo>());
+//        mLayoutManager = new LinearLayoutManager(this);
+//        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerview);
+//        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mRecyclerView.setHasFixedSize(true);
+//        mRecyclerView.setAdapter(mAdapter);
+        mListAdaper = new ListViewAdapter(this, new ArrayList<Repo>());
+        mListView = (ListView)findViewById(R.id.listview_listdata);
+        mListView.setAdapter(mListAdaper);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showDetails(mListAdaper.getItem(position));
+            }
+        });
 
         if (savedInstanceState == null) {
             mPresenter.load();
@@ -192,7 +205,10 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void showList(List<Repo> repos) {
-        mAdapter.mItems = repos;
-        mAdapter.notifyDataSetChanged();
+//        mAdapter.mItems = repos;
+//        mAdapter.notifyDataSetChanged();
+        mListAdaper.clear();
+        mListAdaper.addAll(repos);
+        mListAdaper.notifyDataSetChanged();
     }
 }

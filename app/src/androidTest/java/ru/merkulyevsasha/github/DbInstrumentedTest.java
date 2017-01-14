@@ -11,6 +11,9 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 
 import ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper;
+import ru.merkulyevsasha.github.models.Author;
+import ru.merkulyevsasha.github.models.Commit;
+import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Owner;
 import ru.merkulyevsasha.github.models.Repo;
 
@@ -24,6 +27,7 @@ import ru.merkulyevsasha.github.models.Repo;
 public class DbInstrumentedTest {
 
     private static final String TEST_LOGIN = "testlogin";
+    private static final int TEST_REPO_ID = 1;
 
     private ArrayList<Repo> getTestReposCollectionWithItem(final int id, String name){
         final ArrayList<Repo> collection = new ArrayList<>();
@@ -48,9 +52,6 @@ public class DbInstrumentedTest {
 
         Assert.assertEquals(collectionTest.size(), repos.size());
 
-
-
-
     }
 
     @Test
@@ -69,5 +70,34 @@ public class DbInstrumentedTest {
         Assert.assertEquals(collectionTest.size(), repos.size());
 
     }
+
+    private ArrayList<CommitInfo> getTestCommitsCollectionWithItem(){
+        final ArrayList<CommitInfo> collection = new ArrayList<>();
+        final CommitInfo item = new CommitInfo();
+
+        Commit commit = new Commit();
+        commit.setAuthor(new Author());
+
+        item.setCommit(commit);
+        collection.add(item);
+        return collection;
+    }
+
+
+    @Test
+    public void saveCommits_works() throws Exception {
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        RepoSQLiteOpenHelper db = new RepoSQLiteOpenHelper(appContext);
+        db.cleanCommits(TEST_REPO_ID);
+        ArrayList<CommitInfo> collectionTest = getTestCommitsCollectionWithItem();
+        db.saveCommits(TEST_REPO_ID, collectionTest);
+
+        ArrayList<CommitInfo> commits = db.getCommits(TEST_REPO_ID);
+
+        Assert.assertEquals(collectionTest.size(), commits.size());
+
+    }
+
 
 }

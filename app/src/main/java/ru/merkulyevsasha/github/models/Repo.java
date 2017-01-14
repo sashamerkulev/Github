@@ -11,7 +11,7 @@ public class Repo implements Parcelable {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private int id;
     @SerializedName("owner")
     @Expose
     private Owner owner;
@@ -26,10 +26,10 @@ public class Repo implements Parcelable {
     private String description;
     @SerializedName("forks_count")
     @Expose
-    private Integer forksCount;
+    private int forksCount;
     @SerializedName("watchers_count")
     @Expose
-    private Integer watchersCount;
+    private int watchersCount;
 
     public Repo(){}
 
@@ -38,6 +38,8 @@ public class Repo implements Parcelable {
         name = in.readString();
         fullName = in.readString();
         description = in.readString();
+        forksCount = in.readInt();
+        watchersCount = in.readInt();
     }
 
     public static final Creator<Repo> CREATOR = new Creator<Repo>() {
@@ -119,5 +121,8 @@ public class Repo implements Parcelable {
         dest.writeString(name);
         dest.writeString(fullName);
         dest.writeString(description);
+        dest.writeInt(forksCount);
+        dest.writeInt(watchersCount);
+
     }
 }

@@ -17,16 +17,16 @@ import rx.schedulers.Schedulers;
 
 public class ReposPresenter {
 
-    private MvpListView mView;
-    private DbInterface mDb;
-    private HttpDataInterface mHttp;
-    private Credentials mCredentials;
+    private final MvpListView mView;
+    private final DbInterface mDb;
+    private final HttpDataInterface mHttp;
+    private final Credentials mCredentials;
 
     public ReposPresenter(Credentials credentials, MvpListView view, DbInterface db, HttpDataInterface http) {
         mView = view;
         mDb = db;
         mHttp = http;
-        mCredentials = credentials ;
+        mCredentials = credentials;
     }
 
     public void search(final String searchText) {
