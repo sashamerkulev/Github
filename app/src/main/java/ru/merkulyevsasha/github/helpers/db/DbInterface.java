@@ -15,5 +15,6 @@ public interface DbInterface {
     void cleanCommits(int repoId);
     void saveCommits(int repoId, ArrayList<CommitInfo> commits);
     ArrayList<CommitInfo> getCommits(int repoId);
+    ArrayList<CommitInfo> searchCommits(int repoId, String searchText);
 
 }

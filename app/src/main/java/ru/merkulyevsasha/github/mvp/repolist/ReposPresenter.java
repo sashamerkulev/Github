@@ -2,11 +2,14 @@ package ru.merkulyevsasha.github.mvp.repolist;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.helpers.db.DbInterface;
 import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
+import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
 import rx.Subscriber;
@@ -80,6 +83,14 @@ public class ReposPresenter {
 
             @Override
             public void onNext(ArrayList<Repo> repos) {
+
+                Collections.sort(repos, new Comparator<Repo>() {
+                    @Override
+                    public int compare(Repo o1, Repo o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+
                 mView.showList(repos);
                 mView.hideProgress();
             }

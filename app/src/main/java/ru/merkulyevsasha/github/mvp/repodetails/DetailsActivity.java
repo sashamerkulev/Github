@@ -3,10 +3,13 @@ package ru.merkulyevsasha.github.mvp.repodetails;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,10 +28,13 @@ import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.BaseActivity;
-import ru.merkulyevsasha.github.mvp.repolist.ReposPresenter;
 
 
-public class DetailsActivity extends BaseActivity implements MvpDetailsListView {
+public class DetailsActivity extends BaseActivity
+        implements SearchView.OnQueryTextListener,
+        MvpDetailsListView {
+
+    private static final String KEY_SEARCHTEXT = "searchtext";
 
     public static String KEY_REPO = "repo";
 
@@ -44,6 +50,16 @@ public class DetailsActivity extends BaseActivity implements MvpDetailsListView 
 
     private CommitsPresenter mPresenter;
 
+    private MenuItem mSearchItem;
+    private SearchView mSearchView;
+    private String mSearchText;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(KEY_SEARCHTEXT, mSearchText);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +116,18 @@ public class DetailsActivity extends BaseActivity implements MvpDetailsListView 
         mAdapter = new DetailsRecyclerViewAdapter(new ArrayList<CommitInfo>());
         mRecyclerView.setAdapter(mAdapter);
 
-        mPresenter.load();
+        if (savedInstanceState == null) {
+            mPresenter.load();
+        } else {
+            mSearchText = savedInstanceState.getString(KEY_SEARCHTEXT);
+
+            if (mSearchText == null || mSearchText.isEmpty()){
+                mPresenter.load();
+            } else {
+                mPresenter.search(mSearchText);
+            }
+
+        }
 
     }
 
@@ -114,6 +141,36 @@ public class DetailsActivity extends BaseActivity implements MvpDetailsListView 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_details, menu);
+
+        mSearchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
+        if (mSearchText != null && !mSearchText.isEmpty()) {
+            searchViewText();
+        }
+        mSearchView.setOnQueryTextListener(this);
+
+        MenuItem refreshItem = menu.findItem(R.id.action_refresh);
+        refreshItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                if (!mRefreshLayout.isRefreshing()) {
+                    refresh();
+                }
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    private void searchViewText() {
+        mSearchItem.expandActionView();
+        mSearchView.setQuery(mSearchText, false);
     }
 
     private void refresh(){
@@ -139,5 +196,25 @@ public class DetailsActivity extends BaseActivity implements MvpDetailsListView 
     @Override
     public void showMessage(int message) {
         Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        if (query.length() < 3) {
+            showMessage(R.string.search_validation_message);
+            return false;
+        }
+        mSearchText = query;
+        mPresenter.search(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (newText.isEmpty()) {
+            mSearchText = newText;
+            mPresenter.search(newText);
+        }
+        return false;
     }
 }

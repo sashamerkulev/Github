@@ -109,7 +109,8 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         SQLiteDatabase db = getReadableDatabase();
         try{
             String select = "SELECT * FROM "+REPOS_TABLE_NAME
-                    +" WHERE "+LOGIN_NAME+"=@login";
+                    + " WHERE "+LOGIN_NAME+"=@login"
+                    + " ORDER BY "+REPO_FULLNAME;
             Cursor cursor = db.rawQuery(select, new String[]{login});
             return readCursor(cursor);
 
@@ -124,7 +125,8 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         SQLiteDatabase db = getReadableDatabase();
         try{
             String select = "SELECT * FROM "+REPOS_TABLE_NAME
-                    + " WHERE "+LOGIN_NAME+"=@login and "+ REPO_FULLNAME +" like @search";
+                    + " WHERE "+LOGIN_NAME+"=@login and "+ REPO_FULLNAME +" like @search"
+                    + " ORDER BY "+REPO_FULLNAME;
             Cursor cursor = db.rawQuery(select, new String[]{login, "%"+searchText+"%"});
             return readCursor(cursor);
         } catch (Exception e){
@@ -232,7 +234,8 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         SQLiteDatabase db = getReadableDatabase();
         try{
             String select = "SELECT * FROM "+COMMITS_TABLE_NAME
-                    +" WHERE "+REPO_ID+"=@repoId";
+                    +" WHERE "+REPO_ID+"=@repoId"
+                    +" ORDER BY "+DATE + " DESC";
             Cursor cursor = db.rawQuery(select, new String[]{String.valueOf(repoId)});
             return readCommitCursor(cursor);
 
@@ -242,5 +245,20 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         return null;
     }
 
+    @Override
+    public ArrayList<CommitInfo> searchCommits(int repoId, String searchText) {
+        SQLiteDatabase db = getReadableDatabase();
+        try{
+            String select = "SELECT * FROM "+COMMITS_TABLE_NAME
+                    +" WHERE "+REPO_ID+"=@repoId and ("+ MESSAGE +" like @search" + " or "+ AUTHOR +" like @search)"
+                    +" ORDER BY "+DATE + " DESC";
+            Cursor cursor = db.rawQuery(select, new String[]{String.valueOf(repoId), "%"+searchText+"%"});
+            return readCommitCursor(cursor);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

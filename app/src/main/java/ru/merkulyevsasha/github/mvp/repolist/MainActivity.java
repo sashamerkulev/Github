@@ -58,7 +58,6 @@ public class MainActivity extends BaseActivity
         super.onSaveInstanceState(outState);
 
         outState.putString(KEY_SEARCHTEXT, mSearchText);
-        //outState.putInt(KEY_POSITION, mLayoutManager.findFirstCompletelyVisibleItemPosition());
     }
 
     @Override

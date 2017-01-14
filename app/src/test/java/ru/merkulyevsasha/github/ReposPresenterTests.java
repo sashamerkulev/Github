@@ -130,6 +130,11 @@ public class ReposPresenterTests {
                 return null;
             }
 
+            @Override
+            public ArrayList<CommitInfo> searchCommits(int repoId, String searchText) {
+                return null;
+            }
+
         };
     }
 

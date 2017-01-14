@@ -2,6 +2,8 @@ package ru.merkulyevsasha.github.mvp.repodetails;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ru.merkulyevsasha.github.R;
@@ -50,6 +52,25 @@ public class CommitsPresenter {
 
     }
 
+    public void search(final String searchText) {
+//        mView.showProgress();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+        List<CommitInfo> commits = mDb.searchCommits(mRepo.getId(), searchText);
+        if (commits == null || commits.size() == 0){
+            mView.hideProgress();
+            mView.showMessage(R.string.search_nothing_found_message);
+        } else {
+            //mView.hideProgress();
+            mView.showList(commits);
+        }
+//            }
+//        }).start();
+
+    }
+
+
     private Subscriber<ArrayList<CommitInfo>> getSubscriber() {
         return new Subscriber<ArrayList<CommitInfo>>() {
             @Override
@@ -64,8 +85,16 @@ public class CommitsPresenter {
             }
 
             @Override
-            public void onNext(ArrayList<CommitInfo> repos) {
-                mView.showList(repos);
+            public void onNext(ArrayList<CommitInfo> commits) {
+
+                Collections.sort(commits, new Comparator<CommitInfo>() {
+                    @Override
+                    public int compare(CommitInfo o1, CommitInfo o2) {
+                        return -o1.getCommit().getAuthor().getDate().compareTo(o2.getCommit().getAuthor().getDate());
+                    }
+                });
+
+                mView.showList(commits);
                 mView.hideProgress();
             }
         };

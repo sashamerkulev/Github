@@ -40,6 +40,7 @@ public class Repo implements Parcelable {
         description = in.readString();
         forksCount = in.readInt();
         watchersCount = in.readInt();
+        id = in.readInt();
     }
 
     public static final Creator<Repo> CREATOR = new Creator<Repo>() {
@@ -123,6 +124,6 @@ public class Repo implements Parcelable {
         dest.writeString(description);
         dest.writeInt(forksCount);
         dest.writeInt(watchersCount);
-
+        dest.writeInt(id);
     }
 }
