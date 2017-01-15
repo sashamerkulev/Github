@@ -4,7 +4,6 @@ package ru.merkulyevsasha.github.mvp.repodetails;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.helpers.db.DbInterface;
@@ -12,13 +11,14 @@ import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
 import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
+import ru.merkulyevsasha.github.mvp.MvpPresenter;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-class CommitsPresenter {
+class CommitsPresenter implements MvpPresenter {
 
     private final MvpDetailsListView mView;
     private final DbInterface mDb;
@@ -34,7 +34,7 @@ class CommitsPresenter {
         mRepo = repo;
     }
 
-
+    @Override
     public void load() {
 
         mView.showProgress();
@@ -65,6 +65,7 @@ class CommitsPresenter {
 
     }
 
+    @Override
     public void search(final String searchText) {
         mView.showProgress();
         Observable.just(mDb.searchCommits(mRepo.getId(), searchText))
@@ -135,6 +136,7 @@ class CommitsPresenter {
         };
     }
 
+    @Override
     public void loadFromHttp() {
         mView.showProgress();
         mHttp.getCommits(mCredentials.getLogin(), mCredentials.getPassword(), mRepo.getOwner().getLogin(), mRepo.getName())

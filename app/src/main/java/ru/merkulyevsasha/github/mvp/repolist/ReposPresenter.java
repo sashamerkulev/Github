@@ -10,6 +10,7 @@ import ru.merkulyevsasha.github.helpers.db.DbInterface;
 import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
+import ru.merkulyevsasha.github.mvp.MvpPresenter;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -17,7 +18,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
-public class ReposPresenter {
+public class ReposPresenter  implements MvpPresenter {
 
     private final MvpListView mView;
     private final DbInterface mDb;
@@ -31,6 +32,7 @@ public class ReposPresenter {
         mCredentials = credentials;
     }
 
+    @Override
     public void search(final String searchText) {
 
         mView.showProgress();
@@ -61,6 +63,7 @@ public class ReposPresenter {
 
     }
 
+    @Override
     public void load() {
 
         mView.showProgress();
@@ -129,6 +132,7 @@ public class ReposPresenter {
         };
     }
 
+    @Override
     public void loadFromHttp() {
         mView.showProgress();
         mHttp.getRepos(mCredentials.getLogin(), mCredentials.getPassword())
