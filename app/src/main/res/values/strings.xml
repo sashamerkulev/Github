@@ -14,8 +14,15 @@
 
     <string name="error_field_required">Требуется ввести значение</string>
     <string name="error_action_login">Проверьте правильность заполнения полей и повторите попытку.</string>
+
+    <string name="text_owner">Владелец:</string>
     <string name="text_description">Описание:</string>
     <string name="text_forks">Ветки:</string>
     <string name="text_watchers">Наблюдатели:</string>
+
+    <string name="text_date">Дата:</string>
+    <string name="text_author">Автор:</string>
+    <string name="text_message">Комментарий:</string>
+    <string name="text_hash">Hash:</string>
 
 </resources>
