@@ -12,6 +12,7 @@ import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
 import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -36,37 +37,61 @@ class CommitsPresenter {
 
     public void load() {
 
-//        mView.showProgress();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-        List<CommitInfo> commits = mDb.getCommits(mRepo.getId());
-        if (commits == null || commits.size() == 0){
-            loadFromHttp();
-        } else {
-            //mView.hideProgress();
-            mView.showList(commits);
-        }
-//            }
-//        }).start();
+        mView.showProgress();
+        Observable.just(mDb.getCommits(mRepo.getId()))
+                .subscribe(new Subscriber<ArrayList<CommitInfo>>() {
+                    @Override
+                    public void onCompleted() {
+                        mView.hideProgress();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideProgress();
+                        mView.showMessage(R.string.read_data_message);
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<CommitInfo> commits) {
+
+                        if (commits == null || commits.size() == 0){
+                            loadFromHttp();
+                        } else {
+                            mView.hideProgress();
+                            mView.showList(commits);
+                        }
+                    }
+                });
 
     }
 
     public void search(final String searchText) {
-//        mView.showProgress();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-        List<CommitInfo> commits = mDb.searchCommits(mRepo.getId(), searchText);
-        if (commits == null || commits.size() == 0){
-            mView.hideProgress();
-            mView.showMessage(R.string.search_nothing_found_message);
-        } else {
-            //mView.hideProgress();
-            mView.showList(commits);
-        }
-//            }
-//        }).start();
+        mView.showProgress();
+        Observable.just(mDb.searchCommits(mRepo.getId(), searchText))
+                .subscribe(new Subscriber<ArrayList<CommitInfo>>() {
+                    @Override
+                    public void onCompleted() {
+                        mView.hideProgress();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideProgress();
+                        mView.showMessage(R.string.read_data_message);
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<CommitInfo> commits) {
+
+                        if (commits == null || commits.size() == 0){
+                            mView.hideProgress();
+                            mView.showMessage(R.string.search_nothing_found_message);
+                        } else {
+                            mView.hideProgress();
+                            mView.showList(commits);
+                        }
+                    }
+                });
 
     }
 

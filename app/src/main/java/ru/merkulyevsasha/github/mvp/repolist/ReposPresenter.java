@@ -4,13 +4,13 @@ package ru.merkulyevsasha.github.mvp.repolist;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.helpers.db.DbInterface;
 import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -32,42 +32,65 @@ public class ReposPresenter {
     }
 
     public void search(final String searchText) {
-//        mView.showProgress();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-                List<Repo> repos = mDb.searchRepos(mCredentials.getLogin(), searchText);
-                if (repos == null || repos.size() == 0){
-                    mView.hideProgress();
-                    mView.showMessage(R.string.search_nothing_found_message);
-                } else {
-                    //mView.hideProgress();
-                    mView.showList(repos);
-                }
-//            }
-//        }).start();
+
+        mView.showProgress();
+        Observable.just(mDb.searchRepos(mCredentials.getLogin(), searchText))
+                .subscribe(new Subscriber<ArrayList<Repo>>() {
+                    @Override
+                    public void onCompleted() {
+                        mView.hideProgress();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideProgress();
+                        mView.showMessage(R.string.read_data_message);
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<Repo> repos) {
+                        if (repos == null || repos.size() == 0) {
+                            mView.hideProgress();
+                            mView.showMessage(R.string.search_nothing_found_message);
+                        } else {
+                            mView.showList(repos);
+                            mView.hideProgress();
+                        }
+                    }
+                });
 
     }
 
     public void load() {
 
-//        mView.showProgress();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-                List<Repo> repos = mDb.getRepos(mCredentials.getLogin());
-                if (repos == null || repos.size() == 0){
-                    loadFromHttp();
-                } else {
-                    //mView.hideProgress();
-                    mView.showList(repos);
-                }
-//            }
-//        }).start();
+        mView.showProgress();
+        Observable.just(mDb.getRepos(mCredentials.getLogin()))
+                .subscribe(new Subscriber<ArrayList<Repo>>() {
+                    @Override
+                    public void onCompleted() {
+                        mView.hideProgress();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideProgress();
+                        mView.showMessage(R.string.read_data_message);
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<Repo> repos) {
+                        if (repos == null || repos.size() == 0) {
+                            loadFromHttp();
+                        } else {
+                            mView.showList(repos);
+                            mView.hideProgress();
+                        }
+                    }
+                });
 
     }
 
-    private Subscriber<ArrayList<Repo>> getSubscriber() {
+    private Subscriber<ArrayList<Repo>> getHttpSubscriber() {
         return new Subscriber<ArrayList<Repo>>() {
             @Override
             public void onCompleted() {
@@ -112,7 +135,7 @@ public class ReposPresenter {
                 .doOnNext(saveCollectionToDb())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getSubscriber());
+                .subscribe(getHttpSubscriber());
 
     }
 

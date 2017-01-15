@@ -145,6 +145,10 @@ public class MainActivity extends BaseActivity
     }
 
     private void refresh(){
+        mSearchItem.collapseActionView();
+        mSearchText = "";
+        mSearchView.setQuery(mSearchText, false);
+
         mPresenter.loadFromHttp();
     }
 

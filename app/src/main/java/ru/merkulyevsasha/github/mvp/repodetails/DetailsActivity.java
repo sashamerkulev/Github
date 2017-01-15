@@ -170,6 +170,10 @@ public class DetailsActivity extends BaseActivity
     }
 
     private void refresh(){
+        mSearchItem.collapseActionView();
+        mSearchText = "";
+        mSearchView.setQuery(mSearchText, false);
+
         mPresenter.loadFromHttp();
     }
 
