@@ -34,7 +34,6 @@ public class DetailsActivity extends BaseActivity
 
     public static final String KEY_REPO = "repo";
 
-    private RecyclerView mRecyclerView;
     private DetailsRecyclerViewAdapter mAdapter;
 
     @Override
@@ -86,7 +85,7 @@ public class DetailsActivity extends BaseActivity
         mPresenter = new CommitsPresenter(repo, mCred, this, new RepoSQLiteOpenHelper(this), new GithubService());
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerview);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new DetailsRecyclerViewAdapter(new ArrayList<CommitInfo>());
@@ -97,11 +96,24 @@ public class DetailsActivity extends BaseActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (mPresenter != null) {
+            mPresenter.onDestroy();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_right);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_right);
                 return true;
 
             default:

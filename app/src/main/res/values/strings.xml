@@ -25,4 +25,6 @@
     <string name="text_message">Комментарий:</string>
     <string name="text_hash">Hash:</string>
 
+    <string name="imageview_avatar">Аватар владельца репозитория</string>
+
 </resources>

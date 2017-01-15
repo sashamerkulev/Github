@@ -13,6 +13,7 @@ import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.MvpPresenter;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -25,6 +26,9 @@ public class ReposPresenter  implements MvpPresenter {
     private final HttpDataInterface mHttp;
     private final Credentials mCredentials;
 
+    private Subscription mDbSubscription;
+    private Subscription mHttpSubscription;
+
     public ReposPresenter(Credentials credentials, MvpListView view, DbInterface db, HttpDataInterface http) {
         mView = view;
         mDb = db;
@@ -33,10 +37,20 @@ public class ReposPresenter  implements MvpPresenter {
     }
 
     @Override
+    public void onDestroy(){
+        if (mDbSubscription !=null && !mDbSubscription.isUnsubscribed()){
+            mDbSubscription.unsubscribe();
+        }
+        if (mHttpSubscription !=null && !mHttpSubscription.isUnsubscribed()){
+            mHttpSubscription.unsubscribe();
+        }
+    }
+
+    @Override
     public void search(final String searchText) {
 
         mView.showProgress();
-        Observable.just(mDb.searchRepos(mCredentials.getLogin(), searchText))
+        mDbSubscription = Observable.just(mDb.searchRepos(mCredentials.getLogin(), searchText))
                 .subscribe(new Subscriber<ArrayList<Repo>>() {
                     @Override
                     public void onCompleted() {
@@ -67,7 +81,7 @@ public class ReposPresenter  implements MvpPresenter {
     public void load() {
 
         mView.showProgress();
-        Observable.just(mDb.getRepos(mCredentials.getLogin()))
+        mDbSubscription = Observable.just(mDb.getRepos(mCredentials.getLogin()))
                 .subscribe(new Subscriber<ArrayList<Repo>>() {
                     @Override
                     public void onCompleted() {
@@ -135,7 +149,7 @@ public class ReposPresenter  implements MvpPresenter {
     @Override
     public void loadFromHttp() {
         mView.showProgress();
-        mHttp.getRepos(mCredentials.getLogin(), mCredentials.getPassword())
+        mHttpSubscription = mHttp.getRepos(mCredentials.getLogin(), mCredentials.getPassword())
                 .doOnNext(saveCollectionToDb())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

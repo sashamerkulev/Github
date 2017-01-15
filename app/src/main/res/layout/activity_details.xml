@@ -39,6 +39,7 @@
             android:paddingLeft="@dimen/item_horizontal_margin"
             android:paddingRight="@dimen/item_horizontal_margin"
             android:paddingTop="@dimen/item_vertical_margin"
+            android:contentDescription="@string/imageview_avatar"
             />
 
         <LinearLayout

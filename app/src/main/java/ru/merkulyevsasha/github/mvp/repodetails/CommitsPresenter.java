@@ -14,6 +14,7 @@ import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.MvpPresenter;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -26,6 +27,9 @@ class CommitsPresenter implements MvpPresenter {
     private final Credentials mCredentials;
     private final Repo mRepo;
 
+    private Subscription mDbSubscription;
+    private Subscription mHttpSubscription;
+
     public CommitsPresenter(Repo repo, Credentials credentials, MvpDetailsListView view, DbInterface db, HttpDataInterface http){
         mView = view;
         mDb = db;
@@ -35,10 +39,20 @@ class CommitsPresenter implements MvpPresenter {
     }
 
     @Override
+    public void onDestroy(){
+        if (mDbSubscription !=null && !mDbSubscription.isUnsubscribed()){
+            mDbSubscription.unsubscribe();
+        }
+        if (mHttpSubscription !=null && !mHttpSubscription.isUnsubscribed()){
+            mHttpSubscription.unsubscribe();
+        }
+    }
+
+    @Override
     public void load() {
 
         mView.showProgress();
-        Observable.just(mDb.getCommits(mRepo.getId()))
+        mDbSubscription = Observable.just(mDb.getCommits(mRepo.getId()))
                 .subscribe(new Subscriber<ArrayList<CommitInfo>>() {
                     @Override
                     public void onCompleted() {
@@ -68,7 +82,7 @@ class CommitsPresenter implements MvpPresenter {
     @Override
     public void search(final String searchText) {
         mView.showProgress();
-        Observable.just(mDb.searchCommits(mRepo.getId(), searchText))
+        mDbSubscription = Observable.just(mDb.searchCommits(mRepo.getId(), searchText))
                 .subscribe(new Subscriber<ArrayList<CommitInfo>>() {
                     @Override
                     public void onCompleted() {
@@ -139,7 +153,7 @@ class CommitsPresenter implements MvpPresenter {
     @Override
     public void loadFromHttp() {
         mView.showProgress();
-        mHttp.getCommits(mCredentials.getLogin(), mCredentials.getPassword(), mRepo.getOwner().getLogin(), mRepo.getName())
+        mHttpSubscription = mHttp.getCommits(mCredentials.getLogin(), mCredentials.getPassword(), mRepo.getOwner().getLogin(), mRepo.getName())
                 .doOnNext(saveCollectionToDb())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -7,4 +7,6 @@ public interface MvpPresenter {
     void loadFromHttp();
     void search(final String searchText);
 
+    void onDestroy();
+
 }
