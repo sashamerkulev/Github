@@ -148,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
+        overridePendingTransition(R.anim.diagonaltranslate, R.anim.alpha);
     }
 
     private void showProgress(final boolean show) {

@@ -113,6 +113,7 @@ public class MainActivity extends BaseActivity
         Intent activity = new Intent(this, DetailsActivity.class);
         activity.putExtra(KEY_REPO, repo);
         startActivity(activity);
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_right);
     }
 
     @Override

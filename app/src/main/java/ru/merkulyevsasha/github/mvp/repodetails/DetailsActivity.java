@@ -101,6 +101,7 @@ public class DetailsActivity extends BaseActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_out_right);
                 return true;
 
             default:
