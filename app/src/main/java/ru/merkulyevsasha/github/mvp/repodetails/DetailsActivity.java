@@ -82,7 +82,7 @@ public class DetailsActivity extends BaseActivity
             Picasso.with(this).load(avatarUrl).into(avatar);
         }
 
-        mPresenter = new CommitsPresenter(repo, mCred, this, new RepoSQLiteOpenHelper(this), new GithubService());
+        mPresenter = new CommitsPresenter(repo, mCred, this, new RepoSQLiteOpenHelper(getApplicationContext()), new GithubService());
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);

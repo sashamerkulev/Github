@@ -55,7 +55,7 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        mPresenter = new ReposPresenter(mCred, this, new RepoSQLiteOpenHelper(this), new GithubService());
+        mPresenter = new ReposPresenter(mCred, this, new RepoSQLiteOpenHelper(getApplicationContext()), new GithubService());
 
         mListAdaper = new ListViewAdapter(this, new ArrayList<Repo>());
         ListView mListView = (ListView) findViewById(R.id.listview_listdata);
