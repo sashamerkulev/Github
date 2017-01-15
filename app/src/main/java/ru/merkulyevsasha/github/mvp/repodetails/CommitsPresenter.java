@@ -42,7 +42,7 @@ class CommitsPresenter implements MvpPresenter {
                 .subscribe(new Subscriber<ArrayList<CommitInfo>>() {
                     @Override
                     public void onCompleted() {
-                        mView.hideProgress();
+
                     }
 
                     @Override
@@ -72,7 +72,7 @@ class CommitsPresenter implements MvpPresenter {
                 .subscribe(new Subscriber<ArrayList<CommitInfo>>() {
                     @Override
                     public void onCompleted() {
-                        mView.hideProgress();
+
                     }
 
                     @Override
@@ -88,8 +88,8 @@ class CommitsPresenter implements MvpPresenter {
                             mView.hideProgress();
                             mView.showMessage(R.string.search_nothing_found_message);
                         } else {
-                            mView.hideProgress();
                             mView.showList(commits);
+                            mView.hideProgress();
                         }
                     }
                 });

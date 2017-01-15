@@ -40,7 +40,7 @@ public class ReposPresenter  implements MvpPresenter {
                 .subscribe(new Subscriber<ArrayList<Repo>>() {
                     @Override
                     public void onCompleted() {
-                        mView.hideProgress();
+
                     }
 
                     @Override
@@ -71,7 +71,7 @@ public class ReposPresenter  implements MvpPresenter {
                 .subscribe(new Subscriber<ArrayList<Repo>>() {
                     @Override
                     public void onCompleted() {
-                        mView.hideProgress();
+
                     }
 
                     @Override
