@@ -14,12 +14,19 @@
 Используется для отображения аватарки владельца репозитария.
 
 ###Sqlite
-Используется для кеширования данных о репозитарии и коммитах используется Sqlite.
+Sqlite используется для кеширования данных о репозитарии и коммитах.
 
 ###MVP
-Для MainActivity и DetailsActivity используется архитектурный шаблон MVP, для LoginActivity и SplashActivity не используется.
+Для MainActivity и DetailsActivity используется архитектурный шаблон MVP.
 
-MVP реализовано ручками (это значит, что такие популярные библиотеки как moxy или mosby не используются).
+- UI уровень представлен соответствующими Activities и Presenters (MainActivity/ReposPresenter, DetailsActivity/CommitsPresenter);
+- DataModel представлен соотвествующитми классами (ReposDataModelImpl, CommitsDataModelImpl).
+
+Уровень DataModel абстрагирует работу с БД и сетью через соответствующие интерфейсы. К примеру, не должно быть сложным сделать другую реализацию DatabaseServiceInterface и работать с другой БД, например, Realm.
+
+###Dagger2
+
+Используется для внедрения DataModel классов в соответствующие Activities.
 
 ###Анимация
 Есть несложная анимация переходов от одной активити к другой, используется overridePendingTransition и ресурсы анимации.
