@@ -16,7 +16,7 @@ import ru.merkulyevsasha.github.models.Owner;
 import ru.merkulyevsasha.github.models.Repo;
 
 
-public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterface {
+public class RepoSQLiteOpenHelper extends SQLiteOpenHelper {
 
     public final static String DATABASE_NAME = "repos.db";
     public final static int DATABASE_VERSION = 1;
@@ -104,7 +104,6 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         return items;
     }
 
-    @Override
     public ArrayList<Repo> getRepos(String login) {
         SQLiteDatabase db = getReadableDatabase();
         try{
@@ -120,7 +119,6 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         return null;
     }
 
-    @Override
     public ArrayList<Repo> searchRepos(String login, String searchText) {
         SQLiteDatabase db = getReadableDatabase();
         try{
@@ -135,7 +133,6 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         return null;
     }
 
-    @Override
     public void saveRepos(String login, ArrayList<Repo> repos) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
@@ -161,7 +158,6 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         }
     }
 
-    @Override
     public void cleanRepos(String login) {
         SQLiteDatabase db = getWritableDatabase();
         try {
@@ -171,7 +167,6 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         }
     }
 
-    @Override
     public void cleanCommits(int repoId) {
         SQLiteDatabase db = getWritableDatabase();
         try {
@@ -181,7 +176,6 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         }
     }
 
-    @Override
     public void saveCommits(int repoId, ArrayList<CommitInfo> commits) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
@@ -229,7 +223,6 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         return items;
     }
 
-    @Override
     public ArrayList<CommitInfo> getCommits(int repoId) {
         SQLiteDatabase db = getReadableDatabase();
         try{
@@ -245,7 +238,6 @@ public class RepoSQLiteOpenHelper extends SQLiteOpenHelper implements DbInterfac
         return null;
     }
 
-    @Override
     public ArrayList<CommitInfo> searchCommits(int repoId, String searchText) {
         SQLiteDatabase db = getReadableDatabase();
         try{

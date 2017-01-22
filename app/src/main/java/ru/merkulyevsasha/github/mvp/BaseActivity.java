@@ -87,18 +87,4 @@ public class BaseActivity extends AppCompatActivity
         return false;
     }
 
-    protected void showData(Bundle savedInstanceState){
-        if (savedInstanceState == null) {
-            mPresenter.load();
-        } else {
-            mSearchText = savedInstanceState.getString(KEY_SEARCHTEXT);
-
-            if (mSearchText == null || mSearchText.isEmpty()){
-                mPresenter.load();
-            } else {
-                mPresenter.search(mSearchText);
-            }
-        }
-    }
-
 }

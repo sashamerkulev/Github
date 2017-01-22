@@ -15,13 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.merkulyevsasha.github.R;
-import ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper;
+import ru.merkulyevsasha.github.helpers.db.DbHelper;
 import ru.merkulyevsasha.github.helpers.http.GithubService;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.BaseActivity;
 import ru.merkulyevsasha.github.mvp.repodetails.DetailsActivity;
+import rx.schedulers.Schedulers;
 
 import static ru.merkulyevsasha.github.mvp.repodetails.DetailsActivity.KEY_REPO;
 
@@ -55,7 +56,8 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        mPresenter = new ReposPresenter(mCred, this, new RepoSQLiteOpenHelper(getApplicationContext()), new GithubService());
+        //mPresenter = new ReposPresenter(mCred, this, new RepoSQLiteOpenHelper(getApplicationContext()), new GithubService());
+        mPresenter = new ReposPresenter(mCred, new DbHelper(getApplicationContext(), Schedulers.io()), new GithubService());
 
         mListAdaper = new ListViewAdapter(this, new ArrayList<Repo>());
         ListView mListView = (ListView) findViewById(R.id.listview_listdata);
@@ -67,7 +69,9 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        showData(savedInstanceState);
+        if (savedInstanceState != null) {
+            mSearchText = savedInstanceState.getString(KEY_SEARCHTEXT);
+        }
 
     }
 
@@ -75,9 +79,23 @@ public class MainActivity extends BaseActivity
     protected void onPause() {
         super.onPause();
         if (mPresenter != null) {
-            mPresenter.onDestroy();
+            mPresenter.onPause();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onPause();
+        if (mPresenter != null) {
+            mPresenter.onResume(this);
+            if (mSearchText == null || mSearchText.isEmpty()) {
+                mPresenter.load();
+            } else {
+                mPresenter.search(mSearchText);
+            }
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -11,7 +11,7 @@ import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.MvpPresenter;
-import rx.Observable;
+import ru.merkulyevsasha.github.mvp.MvpView;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -21,7 +21,7 @@ import rx.schedulers.Schedulers;
 
 public class ReposPresenter  implements MvpPresenter {
 
-    private final MvpListView mView;
+    private MvpListView mView;
     private final DbInterface mDb;
     private final HttpDataInterface mHttp;
     private final Credentials mCredentials;
@@ -29,28 +29,43 @@ public class ReposPresenter  implements MvpPresenter {
     private Subscription mDbSubscription;
     private Subscription mHttpSubscription;
 
-    public ReposPresenter(Credentials credentials, MvpListView view, DbInterface db, HttpDataInterface http) {
-        mView = view;
+    public ReposPresenter(Credentials credentials, DbInterface db, HttpDataInterface http) {
         mDb = db;
         mHttp = http;
         mCredentials = credentials;
     }
 
     @Override
-    public void onDestroy(){
-        if (mDbSubscription !=null && !mDbSubscription.isUnsubscribed()){
-            mDbSubscription.unsubscribe();
+    public void onPause(){
+        mView = null;
+        unsubscribe();
+    }
+
+    @Override
+    public void onResume(MvpView view){
+        mView = (MvpListView)view;
+    }
+
+
+    private void unsubscribe(Subscription subscription){
+        if (subscription !=null && !subscription.isUnsubscribed()){
+            subscription.unsubscribe();
         }
-        if (mHttpSubscription !=null && !mHttpSubscription.isUnsubscribed()){
-            mHttpSubscription.unsubscribe();
-        }
+    }
+
+    private void unsubscribe(){
+        unsubscribe(mDbSubscription);
+        unsubscribe(mHttpSubscription);
     }
 
     @Override
     public void search(final String searchText) {
 
         mView.showProgress();
-        mDbSubscription = Observable.just(mDb.searchRepos(mCredentials.getLogin(), searchText))
+        unsubscribe();
+        mDbSubscription = mDb.searchRepos(mCredentials.getLogin(), searchText)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ArrayList<Repo>>() {
                     @Override
                     public void onCompleted() {
@@ -81,7 +96,10 @@ public class ReposPresenter  implements MvpPresenter {
     public void load() {
 
         mView.showProgress();
-        mDbSubscription = Observable.just(mDb.getRepos(mCredentials.getLogin()))
+        unsubscribe();
+        mDbSubscription = mDb.getRepos(mCredentials.getLogin())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ArrayList<Repo>>() {
                     @Override
                     public void onCompleted() {
@@ -149,6 +167,7 @@ public class ReposPresenter  implements MvpPresenter {
     @Override
     public void loadFromHttp() {
         mView.showProgress();
+        unsubscribe();
         mHttpSubscription = mHttp.getRepos(mCredentials.getLogin(), mCredentials.getPassword())
                 .doOnNext(saveCollectionToDb())
                 .subscribeOn(Schedulers.newThread())

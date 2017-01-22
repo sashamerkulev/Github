@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.merkulyevsasha.github.R;
+import ru.merkulyevsasha.github.helpers.db.DbHelper;
 import ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper;
 import ru.merkulyevsasha.github.helpers.http.GithubService;
 import ru.merkulyevsasha.github.models.CommitInfo;
@@ -26,6 +27,7 @@ import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.BaseActivity;
+import rx.schedulers.Schedulers;
 
 
 public class DetailsActivity extends BaseActivity
@@ -82,7 +84,8 @@ public class DetailsActivity extends BaseActivity
             Picasso.with(this).load(avatarUrl).into(avatar);
         }
 
-        mPresenter = new CommitsPresenter(repo, mCred, this, new RepoSQLiteOpenHelper(getApplicationContext()), new GithubService());
+        //mPresenter = new CommitsPresenter(repo, mCred, this, new RepoSQLiteOpenHelper(getApplicationContext()), new GithubService());
+        mPresenter = new CommitsPresenter(repo, mCred, new DbHelper(getApplicationContext(), Schedulers.io()), new GithubService());
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
@@ -91,15 +94,29 @@ public class DetailsActivity extends BaseActivity
         mAdapter = new DetailsRecyclerViewAdapter(new ArrayList<CommitInfo>());
         mRecyclerView.setAdapter(mAdapter);
 
-        showData(savedInstanceState);
-
+        if (savedInstanceState != null) {
+            mSearchText = savedInstanceState.getString(KEY_SEARCHTEXT);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if (mPresenter != null) {
-            mPresenter.onDestroy();
+            mPresenter.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mPresenter != null) {
+            mPresenter.onResume(this);
+            if (mSearchText == null || mSearchText.isEmpty()){
+                mPresenter.load();
+            } else {
+                mPresenter.search(mSearchText);
+            }
         }
     }
 

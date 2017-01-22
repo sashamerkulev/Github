@@ -12,7 +12,7 @@ import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.mvp.MvpPresenter;
-import rx.Observable;
+import ru.merkulyevsasha.github.mvp.MvpView;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -21,7 +21,7 @@ import rx.schedulers.Schedulers;
 
 class CommitsPresenter implements MvpPresenter {
 
-    private final MvpDetailsListView mView;
+    private MvpDetailsListView mView;
     private final DbInterface mDb;
     private final HttpDataInterface mHttp;
     private final Credentials mCredentials;
@@ -30,29 +30,43 @@ class CommitsPresenter implements MvpPresenter {
     private Subscription mDbSubscription;
     private Subscription mHttpSubscription;
 
-    public CommitsPresenter(Repo repo, Credentials credentials, MvpDetailsListView view, DbInterface db, HttpDataInterface http){
-        mView = view;
+    public CommitsPresenter(Repo repo, Credentials credentials, DbInterface db, HttpDataInterface http){
         mDb = db;
         mHttp = http;
         mCredentials = credentials;
         mRepo = repo;
     }
 
+    private void unsubscribe(Subscription subscription){
+        if (subscription !=null && !subscription.isUnsubscribed()){
+            subscription.unsubscribe();
+        }
+    }
+
+    private void unsubscribe(){
+        unsubscribe(mDbSubscription);
+        unsubscribe(mHttpSubscription);
+    }
+
     @Override
-    public void onDestroy(){
-        if (mDbSubscription !=null && !mDbSubscription.isUnsubscribed()){
-            mDbSubscription.unsubscribe();
-        }
-        if (mHttpSubscription !=null && !mHttpSubscription.isUnsubscribed()){
-            mHttpSubscription.unsubscribe();
-        }
+    public void onPause(){
+        mView = null;
+        unsubscribe();
+    }
+
+    @Override
+    public void onResume(MvpView view) {
+        mView = (MvpDetailsListView)view;
     }
 
     @Override
     public void load() {
 
         mView.showProgress();
-        mDbSubscription = Observable.just(mDb.getCommits(mRepo.getId()))
+        unsubscribe();
+        mDbSubscription = mDb.getCommits(mRepo.getId())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ArrayList<CommitInfo>>() {
                     @Override
                     public void onCompleted() {
@@ -82,7 +96,10 @@ class CommitsPresenter implements MvpPresenter {
     @Override
     public void search(final String searchText) {
         mView.showProgress();
-        mDbSubscription = Observable.just(mDb.searchCommits(mRepo.getId(), searchText))
+        unsubscribe();
+        mDbSubscription = mDb.searchCommits(mRepo.getId(), searchText)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ArrayList<CommitInfo>>() {
                     @Override
                     public void onCompleted() {
@@ -111,7 +128,7 @@ class CommitsPresenter implements MvpPresenter {
     }
 
 
-    private Subscriber<ArrayList<CommitInfo>> getSubscriber() {
+    private Subscriber<ArrayList<CommitInfo>> getHttpSubscriber() {
         return new Subscriber<ArrayList<CommitInfo>>() {
             @Override
             public void onCompleted() {
@@ -153,11 +170,12 @@ class CommitsPresenter implements MvpPresenter {
     @Override
     public void loadFromHttp() {
         mView.showProgress();
+        unsubscribe();
         mHttpSubscription = mHttp.getCommits(mCredentials.getLogin(), mCredentials.getPassword(), mRepo.getOwner().getLogin(), mRepo.getName())
                 .doOnNext(saveCollectionToDb())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getSubscriber());
+                .subscribe(getHttpSubscriber());
 
     }
 

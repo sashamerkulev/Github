@@ -38,6 +38,8 @@ dependencies {
     compile 'com.squareup.okhttp:logging-interceptor:2.7.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
+    compile 'com.squareup.sqlbrite:sqlbrite:1.1.1'
+
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:2.0.57-beta"
 }
