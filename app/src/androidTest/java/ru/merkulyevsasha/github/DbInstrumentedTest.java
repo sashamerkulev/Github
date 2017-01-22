@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
-import ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper;
+import ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper;
 import ru.merkulyevsasha.github.models.Author;
 import ru.merkulyevsasha.github.models.Commit;
 import ru.merkulyevsasha.github.models.CommitInfo;
