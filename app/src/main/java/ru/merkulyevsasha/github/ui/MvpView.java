@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.mvp;
+package ru.merkulyevsasha.github.ui;
 
 
 

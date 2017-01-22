@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.mvp.repodetails;
+package ru.merkulyevsasha.github.ui.repodetails;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,14 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.merkulyevsasha.github.R;
-import ru.merkulyevsasha.github.helpers.db.DbHelper;
-import ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper;
-import ru.merkulyevsasha.github.helpers.http.GithubService;
+import ru.merkulyevsasha.github.data.CommitsDataModel;
+import ru.merkulyevsasha.github.data.CommitsDataModelImpl;
+import ru.merkulyevsasha.github.data.ReposDataModelImpl;
+import ru.merkulyevsasha.github.data.db.DatabaseServiceHelper;
+import ru.merkulyevsasha.github.data.http.GithubService;
 import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Credentials;
-import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
+import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
-import ru.merkulyevsasha.github.mvp.BaseActivity;
+import ru.merkulyevsasha.github.ui.BaseActivity;
+import ru.merkulyevsasha.github.ui.repolist.ReposPresenter;
 import rx.schedulers.Schedulers;
 
 
@@ -84,8 +87,9 @@ public class DetailsActivity extends BaseActivity
             Picasso.with(this).load(avatarUrl).into(avatar);
         }
 
-        //mPresenter = new CommitsPresenter(repo, mCred, this, new RepoSQLiteOpenHelper(getApplicationContext()), new GithubService());
-        mPresenter = new CommitsPresenter(repo, mCred, new DbHelper(getApplicationContext(), Schedulers.io()), new GithubService());
+        mPresenter = new CommitsPresenter(repo, mCred, CommitsDataModelImpl.getInstance(
+                new DatabaseServiceHelper(getApplicationContext(), Schedulers.io()),
+                new GithubService()));
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);

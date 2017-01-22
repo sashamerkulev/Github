@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers.db;
+package ru.merkulyevsasha.github.data.db;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Repo;
 import rx.Observable;
 
-public interface DbInterface {
+public interface DatabaseServiceInterface {
 
     Observable<ArrayList<Repo>> getRepos(String login);
     Observable<ArrayList<Repo>> searchRepos(String login, String searchText);

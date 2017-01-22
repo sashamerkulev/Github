@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.mvp.repodetails;
+package ru.merkulyevsasha.github.ui.repodetails;
 
 
 import android.support.v7.widget.RecyclerView;

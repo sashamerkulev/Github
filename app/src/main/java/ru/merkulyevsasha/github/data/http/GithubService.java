@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers.http;
+package ru.merkulyevsasha.github.data.http;
 
 
 import android.util.Base64;
@@ -17,7 +17,7 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 
-public class GithubService implements HttpDataInterface{
+public class GithubService implements HttpServiceInterface {
 
 
     private final GithubInterface githubInterface;

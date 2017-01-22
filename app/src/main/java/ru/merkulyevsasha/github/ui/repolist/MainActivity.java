@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.mvp.repolist;
+package ru.merkulyevsasha.github.ui.repolist;
 
 import android.content.Intent;
 import android.support.v4.view.MenuItemCompat;
@@ -15,16 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.merkulyevsasha.github.R;
-import ru.merkulyevsasha.github.helpers.db.DbHelper;
-import ru.merkulyevsasha.github.helpers.http.GithubService;
+import ru.merkulyevsasha.github.data.ReposDataModelImpl;
+import ru.merkulyevsasha.github.data.db.DatabaseServiceHelper;
+import ru.merkulyevsasha.github.data.http.GithubService;
 import ru.merkulyevsasha.github.models.Credentials;
-import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
+import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
-import ru.merkulyevsasha.github.mvp.BaseActivity;
-import ru.merkulyevsasha.github.mvp.repodetails.DetailsActivity;
+import ru.merkulyevsasha.github.ui.BaseActivity;
+import ru.merkulyevsasha.github.ui.repodetails.DetailsActivity;
 import rx.schedulers.Schedulers;
 
-import static ru.merkulyevsasha.github.mvp.repodetails.DetailsActivity.KEY_REPO;
+import static ru.merkulyevsasha.github.ui.repodetails.DetailsActivity.KEY_REPO;
 
 public class MainActivity extends BaseActivity
         implements SearchView.OnQueryTextListener
@@ -56,8 +57,9 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        //mPresenter = new ReposPresenter(mCred, this, new RepoSQLiteOpenHelper(getApplicationContext()), new GithubService());
-        mPresenter = new ReposPresenter(mCred, new DbHelper(getApplicationContext(), Schedulers.io()), new GithubService());
+        mPresenter = new ReposPresenter(mCred, ReposDataModelImpl.getInstance(
+                new DatabaseServiceHelper(getApplicationContext(), Schedulers.io()),
+                new GithubService()));
 
         mListAdaper = new ListViewAdapter(this, new ArrayList<Repo>());
         ListView mListView = (ListView) findViewById(R.id.listview_listdata);

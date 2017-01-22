@@ -22,10 +22,10 @@
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".mvp.repolist.MainActivity"
+            android:name=".ui.repolist.MainActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".mvp.repodetails.DetailsActivity"
+            android:name=".ui.repodetails.DetailsActivity"
             android:theme="@style/AppTheme"
              />
     </application>

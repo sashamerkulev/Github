@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers.db;
+package ru.merkulyevsasha.github.data.db;
 
 import android.content.ContentValues;
 import android.content.Context;

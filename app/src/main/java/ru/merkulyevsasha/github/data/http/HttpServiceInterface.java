@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers.http;
+package ru.merkulyevsasha.github.data.http;
 
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Repo;
 import rx.Observable;
 
-public interface HttpDataInterface {
+public interface HttpServiceInterface {
 
     Observable<ArrayList<Repo>> getRepos(String login, String password);
 

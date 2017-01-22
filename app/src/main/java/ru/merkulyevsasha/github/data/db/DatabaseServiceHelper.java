@@ -1,10 +1,9 @@
-package ru.merkulyevsasha.github.helpers.db;
+package ru.merkulyevsasha.github.data.db;
 
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
@@ -20,27 +19,27 @@ import rx.Observable;
 import rx.Scheduler;
 import rx.functions.Func1;
 
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.AUTHOR;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.AVATAR_URL;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.COMMITS_TABLE_NAME;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.DATE;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.DESCRIPTION;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.FORKS_COUNT;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.ID;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.LOGIN_NAME;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.MESSAGE;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.OWNER;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.REPO_FULLNAME;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.REPO_ID;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.REPO_NAME;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.SHA;
-import static ru.merkulyevsasha.github.helpers.db.RepoSQLiteOpenHelper.WATCHERS_COUNT;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.AUTHOR;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.AVATAR_URL;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.COMMITS_TABLE_NAME;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.DATE;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.DESCRIPTION;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.FORKS_COUNT;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.ID;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.LOGIN_NAME;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.MESSAGE;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.OWNER;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.REPO_FULLNAME;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.REPO_ID;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.REPO_NAME;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.SHA;
+import static ru.merkulyevsasha.github.data.db.RepoSQLiteOpenHelper.WATCHERS_COUNT;
 
-public class DbHelper implements DbInterface {
+public class DatabaseServiceHelper implements DatabaseServiceInterface {
 
     private final BriteDatabase mDb;
 
-    public DbHelper(Context context, Scheduler scheduler){
+    public DatabaseServiceHelper(Context context, Scheduler scheduler){
 
         SqlBrite sqlBrite = new SqlBrite.Builder().build();
 

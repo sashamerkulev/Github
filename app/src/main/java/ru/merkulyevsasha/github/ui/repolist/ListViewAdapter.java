@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.mvp.repolist;
+package ru.merkulyevsasha.github.ui.repolist;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

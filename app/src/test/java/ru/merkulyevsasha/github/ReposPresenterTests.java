@@ -10,8 +10,8 @@
 //
 //import java.util.ArrayList;
 //
-//import ru.merkulyevsasha.github.helpers.db.DbInterface;
-//import ru.merkulyevsasha.github.helpers.http.HttpDataInterface;
+//import ru.merkulyevsasha.github.helpers.db.DatabaseServiceInterface;
+//import ru.merkulyevsasha.github.helpers.http.HttpServiceInterface;
 //import ru.merkulyevsasha.github.models.Auth;
 //import ru.merkulyevsasha.github.models.CommitInfo;
 //import ru.merkulyevsasha.github.models.Credentials;
@@ -37,7 +37,7 @@
 //    MvpListView view;
 //
 //    @Mock
-//    DbInterface db;
+//    DatabaseServiceInterface db;
 //
 //    @Rule
 //    public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -74,8 +74,8 @@
 //        return collection;
 //    }
 //
-//    private HttpDataInterface getHttpDataInterface(final ArrayList<Repo> testRepos){
-//        return new HttpDataInterface(){
+//    private HttpServiceInterface getHttpDataInterface(final ArrayList<Repo> testRepos){
+//        return new HttpServiceInterface(){
 //            @Override
 //            public Observable<ArrayList<Auth>> auth(String login, String password) {
 //                return null;
@@ -93,8 +93,8 @@
 //        };
 //    }
 //
-//    private DbInterface getDataSearchInterface(final ArrayList<Repo> testRepos){
-//        return new DbInterface(){
+//    private DatabaseServiceInterface getDataSearchInterface(final ArrayList<Repo> testRepos){
+//        return new DatabaseServiceInterface(){
 //            @Override
 //            public ArrayList<Repo> getRepos(String login) {
 //                return testRepos;

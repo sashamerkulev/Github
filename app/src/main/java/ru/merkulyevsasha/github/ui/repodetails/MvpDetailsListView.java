@@ -1,9 +1,9 @@
-package ru.merkulyevsasha.github.mvp.repodetails;
+package ru.merkulyevsasha.github.ui.repodetails;
 
 import java.util.List;
 
 import ru.merkulyevsasha.github.models.CommitInfo;
-import ru.merkulyevsasha.github.mvp.MvpView;
+import ru.merkulyevsasha.github.ui.MvpView;
 
 
 interface MvpDetailsListView extends MvpView{

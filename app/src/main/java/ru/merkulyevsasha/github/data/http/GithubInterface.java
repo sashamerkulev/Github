@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers.http;
+package ru.merkulyevsasha.github.data.http;
 
 
 import java.util.ArrayList;

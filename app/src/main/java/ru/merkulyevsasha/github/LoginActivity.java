@@ -17,11 +17,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import ru.merkulyevsasha.github.helpers.http.GithubService;
-import ru.merkulyevsasha.github.helpers.prefs.PreferencesHelper;
+import ru.merkulyevsasha.github.data.http.GithubService;
+import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Auth;
 import ru.merkulyevsasha.github.models.Credentials;
-import ru.merkulyevsasha.github.mvp.repolist.MainActivity;
+import ru.merkulyevsasha.github.ui.repolist.MainActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

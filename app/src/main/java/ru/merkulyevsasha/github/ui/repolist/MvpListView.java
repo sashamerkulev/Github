@@ -1,9 +1,9 @@
-package ru.merkulyevsasha.github.mvp.repolist;
+package ru.merkulyevsasha.github.ui.repolist;
 
 import java.util.List;
 
 import ru.merkulyevsasha.github.models.Repo;
-import ru.merkulyevsasha.github.mvp.MvpView;
+import ru.merkulyevsasha.github.ui.MvpView;
 
 
 public interface MvpListView extends MvpView{

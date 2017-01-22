@@ -1,4 +1,4 @@
-package ru.merkulyevsasha.github.helpers.prefs;
+package ru.merkulyevsasha.github.data.prefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
