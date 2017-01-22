@@ -14,16 +14,16 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import ru.merkulyevsasha.github.GithubApp;
 import ru.merkulyevsasha.github.R;
-import ru.merkulyevsasha.github.data.ReposDataModelImpl;
-import ru.merkulyevsasha.github.data.db.DatabaseServiceHelper;
-import ru.merkulyevsasha.github.data.http.GithubService;
+import ru.merkulyevsasha.github.data.ReposDataModel;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.ui.BaseActivity;
 import ru.merkulyevsasha.github.ui.repodetails.DetailsActivity;
-import rx.schedulers.Schedulers;
 
 import static ru.merkulyevsasha.github.ui.repodetails.DetailsActivity.KEY_REPO;
 
@@ -35,6 +35,10 @@ public class MainActivity extends BaseActivity
     private PreferencesHelper mPref;
 
     private ListViewAdapter mListAdaper;
+
+    @Inject
+    public ReposDataModel mReposDataModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +61,9 @@ public class MainActivity extends BaseActivity
             }
         });
 
-        mPresenter = new ReposPresenter(mCred, ReposDataModelImpl.getInstance(
-                new DatabaseServiceHelper(getApplicationContext(), Schedulers.io()),
-                new GithubService()));
+        GithubApp.getComponent().inject(this);
+
+        mPresenter = new ReposPresenter(mCred, mReposDataModel);
 
         mListAdaper = new ListViewAdapter(this, new ArrayList<Repo>());
         ListView mListView = (ListView) findViewById(R.id.listview_listdata);

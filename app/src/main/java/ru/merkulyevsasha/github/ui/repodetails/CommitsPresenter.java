@@ -73,7 +73,7 @@ class CommitsPresenter implements MvpPresenter {
     public void loadFromHttp() {
         mView.showProgress();
         unsubscribe();
-        mSubscription = mCommitsDataModel.getCommits(mRepo.getId(), mRepo.getName(), mCredentials.getLogin(), mCredentials.getPassword())
+        mSubscription = mCommitsDataModel.getNewCommits(mRepo.getId(), mRepo.getName(), mCredentials.getLogin(), mCredentials.getPassword())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getSubscriber());

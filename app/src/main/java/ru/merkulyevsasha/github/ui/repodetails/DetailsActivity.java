@@ -18,9 +18,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import ru.merkulyevsasha.github.GithubApp;
 import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.data.CommitsDataModel;
 import ru.merkulyevsasha.github.data.CommitsDataModelImpl;
+import ru.merkulyevsasha.github.data.ReposDataModel;
 import ru.merkulyevsasha.github.data.ReposDataModelImpl;
 import ru.merkulyevsasha.github.data.db.DatabaseServiceHelper;
 import ru.merkulyevsasha.github.data.http.GithubService;
@@ -40,6 +44,10 @@ public class DetailsActivity extends BaseActivity
     public static final String KEY_REPO = "repo";
 
     private DetailsRecyclerViewAdapter mAdapter;
+
+    @Inject
+    public CommitsDataModel mCommitsDataModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +95,9 @@ public class DetailsActivity extends BaseActivity
             Picasso.with(this).load(avatarUrl).into(avatar);
         }
 
-        mPresenter = new CommitsPresenter(repo, mCred, CommitsDataModelImpl.getInstance(
-                new DatabaseServiceHelper(getApplicationContext(), Schedulers.io()),
-                new GithubService()));
+        GithubApp.getComponent().inject(this);
+
+        mPresenter = new CommitsPresenter(repo, mCred, mCommitsDataModel);
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
