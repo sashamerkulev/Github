@@ -17,13 +17,26 @@
 Sqlite используется для кеширования данных о репозитарии и коммитах.
 
 ###SqlBrite
+RxJava обертка над SQLiteOpenHelper, используется для того, что бы работать одинаковым способом и с сетью и с БД.
+Что позволяет написать такой код (пытаемся читать данные из БД, если их нет, читаем из сети и пишем в БД):
+```java
+mDatabase.getRepos(login)
+                .flatMap(new Func1<ArrayList<Repo>, Observable<ArrayList<Repo>>>() {
+                    @Override
+                    public Observable<ArrayList<Repo>> call(ArrayList<Repo> repos) {
+                        return repos.size()==0 ? getNewRepos(login, password)
+                                : Observable.just(repos);
+                    }
+                });
+```
+Оператор switchIfEmpty() не подходит, потому что SqlBrite не посылает терминирующее сообщение, что позволяет использовать эту библиотеку для постоянного отслеживания изменений в БД и нотификации пользователя об этом.
 
 https://github.com/square/sqlbrite
 
 ###MVP
 Для MainActivity и DetailsActivity используется архитектурный шаблон MVP.
 
-- UI уровень представлен соответствующими Activities и Presenters (MainActivity/ReposPresenter, DetailsActivity/CommitsPresenter);
+- UI уровень представлен парой классов Activity/Presenter (MainActivity/ReposPresenter, DetailsActivity/CommitsPresenter);
 - DataModel представлен соотвествующитми классами (ReposDataModelImpl, CommitsDataModelImpl).
 
 Уровень DataModel абстрагирует работу с БД и сетью через соответствующие интерфейсы. К примеру, не должно быть сложным сделать другую реализацию DatabaseServiceInterface и работать с другой БД, например, Realm.
