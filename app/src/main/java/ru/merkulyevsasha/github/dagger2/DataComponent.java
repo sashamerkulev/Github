@@ -3,6 +3,7 @@ package ru.merkulyevsasha.github.dagger2;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import ru.merkulyevsasha.github.LoginActivity;
 import ru.merkulyevsasha.github.ui.repodetails.DetailsActivity;
 import ru.merkulyevsasha.github.ui.repolist.MainActivity;
 
@@ -14,6 +15,7 @@ public interface DataComponent {
 
     void inject(MainActivity context);
     void inject(DetailsActivity context);
+    void inject(LoginActivity context);
 
 
 }

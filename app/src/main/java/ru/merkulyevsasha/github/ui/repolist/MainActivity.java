@@ -31,21 +31,20 @@ public class MainActivity extends BaseActivity
         implements SearchView.OnQueryTextListener
         , MvpListView {
 
-
-    private PreferencesHelper mPref;
-
-    private ListViewAdapter mListAdaper;
-
+    @Inject
+    public PreferencesHelper mPref;
     @Inject
     public ReposDataModel mReposDataModel;
 
+
+    private ListViewAdapter mListAdaper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPref = new PreferencesHelper(this);
+        GithubApp.getComponent().inject(this);
         Credentials mCred = mPref.getCredentials();
         if (mCred == null){
             startLoginActivityAndFinish();
@@ -135,8 +134,6 @@ public class MainActivity extends BaseActivity
                 return false;
             }
         });
-
-
         return true;
     }
 

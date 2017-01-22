@@ -128,12 +128,12 @@ public class DatabaseServiceHelper implements DatabaseServiceInterface {
 
     @Override
     public void cleanRepos(String login){
-        mDb.delete(RepoSQLiteOpenHelper.REPOS_TABLE_NAME, LOGIN_NAME + " = ?", new String[]{login});
+        mDb.delete(RepoSQLiteOpenHelper.REPOS_TABLE_NAME, LOGIN_NAME + " = ?", login);
     }
 
     @Override
     public void cleanCommits(int repoId) {
-        mDb.delete(COMMITS_TABLE_NAME, REPO_ID + " = ?", new String[]{String.valueOf(repoId)});
+        mDb.delete(COMMITS_TABLE_NAME, REPO_ID + " = ?", String.valueOf(repoId));
     }
 
     @Override

@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import ru.merkulyevsasha.github.data.http.GithubService;
+import javax.inject.Inject;
+
+import ru.merkulyevsasha.github.data.AuthDataModel;
 import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Auth;
 import ru.merkulyevsasha.github.models.Credentials;
@@ -36,7 +38,12 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
     private View mRootLoginView;
 
-    private PreferencesHelper mPref;
+    @Inject
+    public AuthDataModel mAuthDataModel;
+
+    @Inject
+    public PreferencesHelper mPref;
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -49,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPref = new PreferencesHelper(this);
+        GithubApp.getComponent().inject(this);
 
         Credentials cred = mPref.getCredentials();
         if (cred != null && !cred.getLogin().isEmpty() && !cred.getPassword().isEmpty()){
@@ -118,8 +125,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             showProgress(true);
 
-            GithubService http = new GithubService();
-            http.auth(login, password)
+            mAuthDataModel.auth(login, password)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ArrayList<Auth>>() {

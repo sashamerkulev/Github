@@ -23,18 +23,11 @@ import javax.inject.Inject;
 import ru.merkulyevsasha.github.GithubApp;
 import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.data.CommitsDataModel;
-import ru.merkulyevsasha.github.data.CommitsDataModelImpl;
-import ru.merkulyevsasha.github.data.ReposDataModel;
-import ru.merkulyevsasha.github.data.ReposDataModelImpl;
-import ru.merkulyevsasha.github.data.db.DatabaseServiceHelper;
-import ru.merkulyevsasha.github.data.http.GithubService;
 import ru.merkulyevsasha.github.models.CommitInfo;
 import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.ui.BaseActivity;
-import ru.merkulyevsasha.github.ui.repolist.ReposPresenter;
-import rx.schedulers.Schedulers;
 
 
 public class DetailsActivity extends BaseActivity
@@ -48,13 +41,15 @@ public class DetailsActivity extends BaseActivity
     @Inject
     public CommitsDataModel mCommitsDataModel;
 
+    @Inject
+    public PreferencesHelper mPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        PreferencesHelper mPref = new PreferencesHelper(this);
+        GithubApp.getComponent().inject(this);
         Credentials mCred = mPref.getCredentials();
         if (mCred == null){
             startLoginActivityAndFinish();
@@ -94,8 +89,6 @@ public class DetailsActivity extends BaseActivity
             ImageView avatar = (ImageView)findViewById(R.id.imageview_owner_avatar);
             Picasso.with(this).load(avatarUrl).into(avatar);
         }
-
-        GithubApp.getComponent().inject(this);
 
         mPresenter = new CommitsPresenter(repo, mCred, mCommitsDataModel);
 
