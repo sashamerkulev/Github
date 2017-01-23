@@ -27,7 +27,7 @@ mDatabase.getRepos(login)
                         return repos.size()==0 ? getNewRepos(login, password)
                                 : Observable.just(repos);
                     }
-                });
+                }).cache();
 ```
 Оператор switchIfEmpty() не подходит, потому что SqlBrite не посылает терминирующее сообщение, что позволяет использовать эту библиотеку для постоянного отслеживания изменений в БД и нотификации пользователя об этом.
 
