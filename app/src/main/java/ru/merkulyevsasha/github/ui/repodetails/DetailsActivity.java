@@ -22,9 +22,7 @@ import javax.inject.Inject;
 
 import ru.merkulyevsasha.github.GithubApp;
 import ru.merkulyevsasha.github.R;
-import ru.merkulyevsasha.github.data.CommitsDataModel;
 import ru.merkulyevsasha.github.models.CommitInfo;
-import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.ui.BaseSearchActivity;
 
@@ -35,10 +33,6 @@ public class DetailsActivity extends BaseSearchActivity
 
     public static final String KEY_REPO = "repo";
 
-    @Inject
-    public CommitsDataModel mCommitsDataModel;
-    @Inject
-    public PreferencesHelper mPref;
     @Inject
     public CommitsPresenter mPresenter;
 

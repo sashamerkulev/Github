@@ -18,7 +18,6 @@ import javax.inject.Inject;
 
 import ru.merkulyevsasha.github.GithubApp;
 import ru.merkulyevsasha.github.R;
-import ru.merkulyevsasha.github.data.ReposDataModel;
 import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
 import ru.merkulyevsasha.github.ui.BaseSearchActivity;
@@ -32,8 +31,6 @@ public class MainActivity extends BaseSearchActivity
 
     @Inject
     public PreferencesHelper mPref;
-    @Inject
-    public ReposDataModel mReposDataModel;
     @Inject
     public ReposPresenter mPresenter;
 
