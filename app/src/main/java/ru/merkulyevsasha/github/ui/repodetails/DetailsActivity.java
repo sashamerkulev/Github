@@ -41,6 +41,13 @@ public class DetailsActivity extends BaseSearchActivity
     private DetailsRecyclerViewAdapter mAdapter;
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(KEY_REFRESHING, mRefreshLayout.isRefreshing());
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
@@ -91,6 +98,7 @@ public class DetailsActivity extends BaseSearchActivity
 
         if (savedInstanceState != null) {
             mSearchText = savedInstanceState.getString(KEY_SEARCHTEXT);
+            mRefreshLayout.setRefreshing(savedInstanceState.getBoolean(KEY_REFRESHING, false));
         }
     }
 
@@ -108,7 +116,11 @@ public class DetailsActivity extends BaseSearchActivity
         if (mPresenter != null) {
             mPresenter.onResume(this);
             mPresenter.setRepo(mRepo);
-            mPresenter.load(mSearchText);
+            if (mRefreshLayout.isRefreshing()){
+                mPresenter.loadFromHttp();
+            } else {
+                mPresenter.load(mSearchText);
+            }
         }
     }
 

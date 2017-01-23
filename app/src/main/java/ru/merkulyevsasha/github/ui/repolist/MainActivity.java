@@ -37,6 +37,13 @@ public class MainActivity extends BaseSearchActivity
     private ListViewAdapter mListAdaper;
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(KEY_REFRESHING, mRefreshLayout.isRefreshing());
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -65,6 +72,7 @@ public class MainActivity extends BaseSearchActivity
 
         if (savedInstanceState != null) {
             mSearchText = savedInstanceState.getString(KEY_SEARCHTEXT);
+            mRefreshLayout.setRefreshing(savedInstanceState.getBoolean(KEY_REFRESHING, false));
         }
 
     }
@@ -82,7 +90,11 @@ public class MainActivity extends BaseSearchActivity
         super.onPause();
         if (mPresenter != null) {
             mPresenter.onResume(this);
-            mPresenter.load(mSearchText);
+            if (mRefreshLayout.isRefreshing()){
+                mPresenter.loadFromHttp();
+            } else {
+                mPresenter.load(mSearchText);
+            }
         }
     }
 

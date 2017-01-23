@@ -10,6 +10,7 @@ import android.view.MenuItem;
 public class BaseSearchActivity extends BaseActivity {
 
     protected static final String KEY_SEARCHTEXT = "searchtext";
+    protected static final String KEY_REFRESHING = "refreshing";
 
     protected MenuItem mSearchItem;
     protected SearchView mSearchView;
