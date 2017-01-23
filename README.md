@@ -37,7 +37,7 @@ https://github.com/square/sqlbrite
 Для MainActivity и DetailsActivity используется архитектурный шаблон MVP.
 
 - UI уровень представлен парой классов Activity/Presenter (MainActivity/ReposPresenter, DetailsActivity/CommitsPresenter);
-- Существует как минимум один DataModel класс  (ReposDataModelImpl, CommitsDataModelImpl) для каждой пары Activity/Presenter, который покрывает всю необходимую функциональсть пары.
+- Существует как минимум один DataModel класс  (ReposDataModelImpl, CommitsDataModelImpl) для каждой пары Activity/Presenter, который покрывает всю необходимую функциональность пары.
 
 Уровень DataModel абстрагирует работу с БД и сетью через соответствующие интерфейсы. К примеру, не должно быть сложным сделать другую реализацию DatabaseServiceInterface и работать с другой БД, например, Realm.
 
@@ -45,7 +45,7 @@ https://github.com/square/sqlbrite
 
 Используется для внедрения Presenters в Activities.
 
-DataModel классы используются при создании Presenters в @Module.
+DataModel классы создаются/используются для создании Presenters в @Module.
 
 ###Анимация
 Есть несложная анимация переходов от одной активити к другой, используется overridePendingTransition и ресурсы анимации.
