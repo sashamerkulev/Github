@@ -42,7 +42,7 @@ public class CommitsDataModelImpl implements CommitsDataModel {
                         return commits.size()==0 ? getNewCommits(repoId, repoName, login, password)
                                 : Observable.just(commits);
                     }
-                });
+                }).cache();
     }
 
     private Action1<ArrayList<CommitInfo>> saveCollectionToDb(final int repoId){
@@ -58,7 +58,8 @@ public class CommitsDataModelImpl implements CommitsDataModel {
     @Override
     public Observable<ArrayList<CommitInfo>> getNewCommits(int repoId, String repoName, String login, String password) {
         return mHttp.getCommits(login, password, login, repoName)
-                .doOnNext(saveCollectionToDb(repoId));
+                .doOnNext(saveCollectionToDb(repoId))
+                .cache();
     }
 
     @Override

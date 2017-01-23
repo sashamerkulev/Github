@@ -52,14 +52,14 @@ public class ReposDataModelImpl implements ReposDataModel {
                         return repos.size()==0 ? getNewRepos(login, password)
                                 : Observable.just(repos);
                     }
-                });
+                }).cache();
     }
 
     @Override
     public Observable<ArrayList<Repo>> getNewRepos(String login, String password) {
         return mHttp.getRepos(login, password)
                 .doOnNext(saveCollectionToDb(login))
-                .sorted();
+                .cache();
     }
 
     @Override
