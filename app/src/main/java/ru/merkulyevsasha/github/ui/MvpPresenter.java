@@ -3,7 +3,7 @@ package ru.merkulyevsasha.github.ui;
 
 public interface MvpPresenter extends MvpPresenterBase{
 
-    void load();
+    void load(final String searchText);
     void loadFromHttp();
     void search(final String searchText);
 

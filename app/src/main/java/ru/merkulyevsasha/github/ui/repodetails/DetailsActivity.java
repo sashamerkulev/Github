@@ -24,25 +24,27 @@ import ru.merkulyevsasha.github.GithubApp;
 import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.data.CommitsDataModel;
 import ru.merkulyevsasha.github.models.CommitInfo;
-import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
-import ru.merkulyevsasha.github.ui.BaseActivity;
+import ru.merkulyevsasha.github.ui.BaseSearchActivity;
 
 
-public class DetailsActivity extends BaseActivity
+public class DetailsActivity extends BaseSearchActivity
         implements SearchView.OnQueryTextListener,
         MvpDetailsListView {
 
     public static final String KEY_REPO = "repo";
 
-    private DetailsRecyclerViewAdapter mAdapter;
-
     @Inject
     public CommitsDataModel mCommitsDataModel;
-
     @Inject
     public PreferencesHelper mPref;
+    @Inject
+    public CommitsPresenter mPresenter;
+
+    private Repo mRepo;
+
+    private DetailsRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +52,6 @@ public class DetailsActivity extends BaseActivity
         setContentView(R.layout.activity_details);
 
         GithubApp.getComponent().inject(this);
-        Credentials mCred = mPref.getCredentials();
-        if (mCred == null){
-            startLoginActivityAndFinish();
-        }
 
         ActionBar ab = getSupportActionBar();
         if (ab != null){
@@ -71,26 +69,24 @@ public class DetailsActivity extends BaseActivity
         });
 
         Intent intent = getIntent();
-        final Repo repo = intent.getParcelableExtra(KEY_REPO);
-        setTitle(repo.getName());
+        mRepo = intent.getParcelableExtra(KEY_REPO);
+        setTitle(mRepo.getName());
 
         TextView owner = (TextView)findViewById(R.id.textview_owner);
         TextView descr = (TextView)findViewById(R.id.textview_description);
         TextView forks = (TextView)findViewById(R.id.textview_forks);
         TextView watchers = (TextView)findViewById(R.id.textview_watchers);
 
-        owner.setText(repo.getOwner().getLogin());
-        descr.setText(repo.getDescription()==null?"":repo.getDescription());
-        forks.setText(String.valueOf(repo.getForksCount()));
-        watchers.setText(String.valueOf(repo.getWatchersCount()));
+        owner.setText(mRepo.getOwner().getLogin());
+        descr.setText(mRepo.getDescription()==null?"":mRepo.getDescription());
+        forks.setText(String.valueOf(mRepo.getForksCount()));
+        watchers.setText(String.valueOf(mRepo.getWatchersCount()));
 
-        String avatarUrl = repo.getOwner().getAvatarUrl();
+        String avatarUrl = mRepo.getOwner().getAvatarUrl();
         if (avatarUrl != null && !avatarUrl.isEmpty()) {
             ImageView avatar = (ImageView)findViewById(R.id.imageview_owner_avatar);
             Picasso.with(this).load(avatarUrl).into(avatar);
         }
-
-        mPresenter = new CommitsPresenter(repo, mCred, mCommitsDataModel);
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
@@ -117,11 +113,8 @@ public class DetailsActivity extends BaseActivity
         super.onResume();
         if (mPresenter != null) {
             mPresenter.onResume(this);
-            if (mSearchText == null || mSearchText.isEmpty()){
-                mPresenter.load();
-            } else {
-                mPresenter.search(mSearchText);
-            }
+            mPresenter.setRepo(mRepo);
+            mPresenter.load(mSearchText);
         }
     }
 
@@ -169,9 +162,39 @@ public class DetailsActivity extends BaseActivity
     }
 
     @Override
+    public void showLogin() {
+        startLoginActivityAndFinish();
+    }
+
+    @Override
     public void showList(List<CommitInfo> commits) {
         mAdapter.mItems = commits;
         mAdapter.notifyDataSetChanged();
+    }
+
+    protected void refresh(){
+        initSearchViewText();
+        mPresenter.loadFromHttp();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        if (query.length() < 3) {
+            showMessage(R.string.search_validation_message);
+            return false;
+        }
+        mSearchText = query;
+        mPresenter.search(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (newText.isEmpty()) {
+            mSearchText = newText;
+            mPresenter.search(newText);
+        }
+        return false;
     }
 
 }

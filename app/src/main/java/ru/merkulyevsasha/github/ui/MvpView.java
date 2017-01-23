@@ -8,5 +8,6 @@ public interface MvpView {
     void hideProgress();
 
     void showMessage(int message);
+    void showLogin();
 
 }

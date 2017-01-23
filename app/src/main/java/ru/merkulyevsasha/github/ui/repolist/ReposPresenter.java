@@ -56,13 +56,22 @@ public class ReposPresenter  implements MvpPresenter {
     }
 
     @Override
-    public void load() {
-        mView.showProgress();
-        unsubscribe();
-        mSubscription = mReposDataModel.getRepos(mCredentials.getLogin(), mCredentials.getPassword())
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getSubscriber());
+    public void load(final String searchText) {
+
+        if (mCredentials == null || mCredentials.getLogin() == null || mCredentials.getLogin().isEmpty()){
+            mView.showLogin();
+        }
+
+        if (searchText == null || searchText.isEmpty()) {
+            mView.showProgress();
+            unsubscribe();
+            mSubscription = mReposDataModel.getRepos(mCredentials.getLogin(), mCredentials.getPassword())
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(getSubscriber());
+        } else {
+            search(searchText);
+        }
     }
 
     @Override

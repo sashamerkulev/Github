@@ -15,19 +15,19 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-class CommitsPresenter implements MvpPresenter {
+public class CommitsPresenter implements MvpPresenter {
+
+    private final Credentials mCredentials;
 
     private MvpDetailsListView mView;
-    private final Credentials mCredentials;
-    private final Repo mRepo;
+    private Repo mRepo;
 
     private Subscription mSubscription;
 
     private CommitsDataModel mCommitsDataModel;
 
-    public CommitsPresenter(Repo repo, Credentials credentials, CommitsDataModel commitsDataModel){
+    public CommitsPresenter(Credentials credentials, CommitsDataModel commitsDataModel){
         mCredentials = credentials;
-        mRepo = repo;
         mCommitsDataModel = commitsDataModel;
     }
 
@@ -48,15 +48,27 @@ class CommitsPresenter implements MvpPresenter {
         mView = (MvpDetailsListView)view;
     }
 
-    @Override
-    public void load() {
-        mView.showProgress();
-        unsubscribe();
-        mSubscription = mCommitsDataModel.getCommits(mRepo.getId(), mRepo.getName(), mCredentials.getLogin(), mCredentials.getPassword())
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getSubscriber());
+    public void setRepo(Repo repo){
+        mRepo = repo;
+    }
 
+    @Override
+    public void load(final String searchText) {
+
+        if (mCredentials == null || mCredentials.getLogin() == null || mCredentials.getLogin().isEmpty()){
+            mView.showLogin();
+        }
+
+        if (searchText == null || searchText.isEmpty()) {
+            mView.showProgress();
+            unsubscribe();
+            mSubscription = mCommitsDataModel.getCommits(mRepo.getId(), mRepo.getName(), mCredentials.getLogin(), mCredentials.getPassword())
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(getSubscriber());
+        } else {
+            search(searchText);
+        }
     }
 
     @Override

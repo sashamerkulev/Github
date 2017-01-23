@@ -19,6 +19,8 @@ import ru.merkulyevsasha.github.data.db.DatabaseServiceInterface;
 import ru.merkulyevsasha.github.data.http.GithubService;
 import ru.merkulyevsasha.github.data.http.HttpServiceInterface;
 import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
+import ru.merkulyevsasha.github.ui.repodetails.CommitsPresenter;
+import ru.merkulyevsasha.github.ui.repolist.ReposPresenter;
 import rx.schedulers.Schedulers;
 
 @Module
@@ -58,6 +60,18 @@ public class DataModule {
     @Provides
     AuthDataModel providesAuthDataModel(HttpServiceInterface http) {
         return AuthDataModelImpl.getInstance(http);
+    }
+
+    @Singleton
+    @Provides
+    ReposPresenter providesReposPresenter(PreferencesHelper helper, ReposDataModel reposDataModel) {
+        return new ReposPresenter(helper.getCredentials(), reposDataModel);
+    }
+
+    @Singleton
+    @Provides
+    CommitsPresenter providesCommitsPresenter(PreferencesHelper helper, CommitsDataModel commitsDataModel) {
+        return new CommitsPresenter(helper.getCredentials(), commitsDataModel);
     }
 
 }

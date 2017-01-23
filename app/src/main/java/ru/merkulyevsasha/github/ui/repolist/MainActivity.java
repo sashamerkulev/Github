@@ -19,15 +19,14 @@ import javax.inject.Inject;
 import ru.merkulyevsasha.github.GithubApp;
 import ru.merkulyevsasha.github.R;
 import ru.merkulyevsasha.github.data.ReposDataModel;
-import ru.merkulyevsasha.github.models.Credentials;
 import ru.merkulyevsasha.github.data.prefs.PreferencesHelper;
 import ru.merkulyevsasha.github.models.Repo;
-import ru.merkulyevsasha.github.ui.BaseActivity;
+import ru.merkulyevsasha.github.ui.BaseSearchActivity;
 import ru.merkulyevsasha.github.ui.repodetails.DetailsActivity;
 
 import static ru.merkulyevsasha.github.ui.repodetails.DetailsActivity.KEY_REPO;
 
-public class MainActivity extends BaseActivity
+public class MainActivity extends BaseSearchActivity
         implements SearchView.OnQueryTextListener
         , MvpListView {
 
@@ -35,7 +34,8 @@ public class MainActivity extends BaseActivity
     public PreferencesHelper mPref;
     @Inject
     public ReposDataModel mReposDataModel;
-
+    @Inject
+    public ReposPresenter mPresenter;
 
     private ListViewAdapter mListAdaper;
 
@@ -45,10 +45,6 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         GithubApp.getComponent().inject(this);
-        Credentials mCred = mPref.getCredentials();
-        if (mCred == null){
-            startLoginActivityAndFinish();
-        }
 
         mRootView = findViewById(R.id.activity_main);
 
@@ -59,10 +55,6 @@ public class MainActivity extends BaseActivity
                 refresh();
             }
         });
-
-        GithubApp.getComponent().inject(this);
-
-        mPresenter = new ReposPresenter(mCred, mReposDataModel);
 
         mListAdaper = new ListViewAdapter(this, new ArrayList<Repo>());
         ListView mListView = (ListView) findViewById(R.id.listview_listdata);
@@ -93,14 +85,9 @@ public class MainActivity extends BaseActivity
         super.onPause();
         if (mPresenter != null) {
             mPresenter.onResume(this);
-            if (mSearchText == null || mSearchText.isEmpty()) {
-                mPresenter.load();
-            } else {
-                mPresenter.search(mSearchText);
-            }
+            mPresenter.load(mSearchText);
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,9 +133,40 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
+    public void showLogin() {
+        startLoginActivityAndFinish();
+    }
+
+    @Override
     public void showList(List<Repo> repos) {
         mListAdaper.clear();
         mListAdaper.addAll(repos);
         mListAdaper.notifyDataSetChanged();
     }
+
+    protected void refresh(){
+        initSearchViewText();
+        mPresenter.loadFromHttp();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        if (query.length() < 3) {
+            showMessage(R.string.search_validation_message);
+            return false;
+        }
+        mSearchText = query;
+        mPresenter.search(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (newText.isEmpty()) {
+            mSearchText = newText;
+            mPresenter.search(newText);
+        }
+        return false;
+    }
+
 }
