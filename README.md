@@ -49,3 +49,44 @@ DataModel классы создаются/используются для соз
 
 ###Анимация
 Есть несложная анимация переходов от одной активити к другой, используется overridePendingTransition и ресурсы анимации.
+
+###Custom behavior
+
+Корневой тег разметки DetailsActivity теперь содержит CoordinatorLayout, в разметку также была добавлен FloatingActionButton.
+
+Добавлен класс FabBehavior, который, скрывает FloatingActionButton, когда прокручивается RecyclerView.
+```xml
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        ...
+        app:layout_behavior="ru.merkulyevsasha.github.ui.repodetails.FabBehavior"
+        />
+```
+
+Реализовано таким, незамысловатым образом:
+```java
+    @Override
+    public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
+        return dependency instanceof RecyclerView;
+    }
+
+    @Override
+    public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
+
+        int scrollState = ((RecyclerView)dependency).getScrollState();
+
+        if (scrollState == SCROLL_STATE_DRAGGING || scrollState == SCROLL_STATE_SETTLING)
+        {
+            //child.setSize(FloatingActionButton.SIZE_MINI);
+            child.setVisibility(View.INVISIBLE);
+        } else { // SCROLL_STATE_IDLE
+            //child.setSize(FloatingActionButton.SIZE_NORMAL);
+            child.setVisibility(View.VISIBLE);
+        }
+
+        return false;
+    }
+```
+
+
+
