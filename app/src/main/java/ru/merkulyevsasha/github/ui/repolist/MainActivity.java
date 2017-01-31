@@ -105,7 +105,7 @@ public class MainActivity extends BaseSearchActivity
         mSearchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
         if (mSearchText != null && !mSearchText.isEmpty()) {
-            searchViewText();
+            expandSearchView();
         }
         mSearchView.setOnQueryTextListener(this);
 
@@ -154,7 +154,7 @@ public class MainActivity extends BaseSearchActivity
     }
 
     protected void refresh(){
-        initSearchViewText();
+        collapseSearchView();
         mPresenter.loadFromHttp();
     }
 

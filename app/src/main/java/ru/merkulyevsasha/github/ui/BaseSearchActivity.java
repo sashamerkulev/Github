@@ -23,14 +23,14 @@ public class BaseSearchActivity extends BaseActivity {
         outState.putString(KEY_SEARCHTEXT, mSearchText);
     }
 
-    protected void searchViewText() {
+    protected void expandSearchView() {
         mSearchItem.expandActionView();
         mSearchView.setQuery(mSearchText, false);
     }
 
-    protected void initSearchViewText(){
-        mSearchItem.collapseActionView();
+    protected void collapseSearchView(){
         mSearchText = "";
+        mSearchItem.collapseActionView();
         mSearchView.setQuery(mSearchText, false);
     }
 
