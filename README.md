@@ -7,7 +7,7 @@
 
 Для реализации основного функционала использовались RxJava, Retrofit2, Picasso, SqlBrite (RxJava обертка над SQLiteOpenHelper).
 
-###RxJava+Retrofi2 
+###RxJava+Retrofit2 
 Данная связка используется для работы с Github REST API.
 
 ###Picasso 
